@@ -1,4 +1,4 @@
-package com.test
+package com.hbase.test
 
 import org.apache.hadoop.hbase.client.Scan
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable
