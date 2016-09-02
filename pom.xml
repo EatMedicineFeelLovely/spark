@@ -36,36 +36,49 @@
 			<scope>system</scope>
 			<systemPath>C:\Program Files\Java\jdk1.7.0_79\lib\tools.jar</systemPath>
 		</dependency>
+
 		<dependency>
-			<groupId>org.apache.hbase</groupId>
-			<artifactId>hbase-client</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<!-- <dependency>
 			<groupId>org.apache.hbase</groupId>
 			<artifactId>hbase-server</artifactId>
 			<version>1.0.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>hadoop-common</artifactId>
+					<groupId>org.apache.hadoop</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.hbase</groupId>
-			<artifactId>hbase-common</artifactId>
-			<version>1.0.0</version>
+			<groupId>org.apache.hive.hcatalog</groupId>
+			<artifactId>hive-hcatalog-core</artifactId>
+			<version>2.1.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>javax.servlet</artifactId>
+					<groupId>org.eclipse.jetty.orbit</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.hive</groupId>
+			<artifactId>hive-metastore</artifactId>
+			<version>2.1.0</version>
+		</dependency>
+		<!-- <dependency> <groupId>org.apache.hbase</groupId> <artifactId>hbase-server</artifactId> 
+			<version>1.0.0</version> </dependency> <dependency> <groupId>org.apache.hbase</groupId> 
+			<artifactId>hbase-common</artifactId> <version>1.0.0</version> </dependency> -->
 
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-client</artifactId>
-			<version>2.6.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-common</artifactId>
-			<version>2.6.0</version>
-		</dependency> -->
+
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-core_2.10</artifactId>
 			<version>1.3.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>javax.servlet</artifactId>
+					<groupId>org.eclipse.jetty.orbit</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.spark</groupId>
@@ -78,16 +91,10 @@
 			<artifactId>spark-mllib_2.10</artifactId>
 			<version>1.3.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-hive_2.10</artifactId>
-			<version>1.3.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-streaming-flume_2.10</artifactId>
-			<version>1.3.0</version>
-		</dependency>
+		<!-- <dependency> <groupId>org.apache.spark</groupId> <artifactId>spark-hive_2.10</artifactId> 
+			<version>1.3.0</version> </dependency> -->
+		<!-- <dependency> <groupId>org.apache.spark</groupId> <artifactId>spark-streaming-flume_2.10</artifactId> 
+			<version>1.3.0</version> </dependency> -->
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-sql_2.10</artifactId>
@@ -95,8 +102,18 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-hive_2.10</artifactId>
+			<version>1.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-streaming-kafka_2.10</artifactId>
 			<version>1.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
 		</dependency>
 		<!-- <dependency> <groupId>org.apache.spark</groupId> <artifactId>spark-streaming-kafka_2.10</artifactId> 
 			<version>1.3.0</version> </dependency> -->
@@ -107,32 +124,19 @@
 		<!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka_2.10 -->
 		<!-- <dependency> <groupId>org.apache.kafka</groupId> <artifactId>kafka_2.10</artifactId> 
 			<version>0.9.0.0</version> </dependency> -->
-		<dependency>
-			<groupId>org.apache.kafka</groupId>
-			<artifactId>kafka-clients</artifactId>
-			<version>0.9.0.0</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-log4j-appender -->
-		<dependency>
-			<groupId>org.apache.kafka</groupId>
-			<artifactId>kafka-log4j-appender</artifactId>
-			<version>0.9.0.0</version>
-		</dependency>
+		<!-- <dependency> <groupId>org.apache.kafka</groupId> <artifactId>kafka-clients</artifactId> 
+			<version>0.9.0.0</version> </dependency> -->
+		<!-- 将log4j的日志直接写入kafka <dependency> <groupId>org.apache.kafka</groupId> 
+			<artifactId>kafka-log4j-appender</artifactId> <version>0.9.0.0</version> 
+			</dependency> -->
 
 		<!-- <dependency> <groupId>org.apache.hbase</groupId> <artifactId>hbase-client</artifactId> 
 			<version>1.0.0</version> </dependency> -->
 		<!-- <dependency> <groupId>org.apache.hbase</groupId> <artifactId>hbase-server</artifactId> 
 			<version>1.0.0</version> </dependency> -->
-		<dependency>
-			<groupId>org.mongodb</groupId>
-			<artifactId>mongo-hadoop</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mongodb.mongo-hadoop</groupId>
-			<artifactId>mongo-hadoop-core</artifactId>
-			<version>1.4.2</version>
-		</dependency>
+		<!-- <dependency> <groupId>org.mongodb</groupId> <artifactId>mongo-hadoop</artifactId> 
+			<version>1.0.0</version> </dependency> <dependency> <groupId>org.mongodb.mongo-hadoop</groupId> 
+			<artifactId>mongo-hadoop-core</artifactId> <version>1.4.2</version> </dependency> -->
 		<!-- <dependency> <groupId>org.apache.hadoop</groupId> <artifactId>hadoop-core</artifactId> 
 			<version>0.20.2</version> </dependency> -->
 		<!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-common -->
@@ -143,44 +147,15 @@
 			<version>1.2</version> </dependency> <dependency> <groupId>commons-collections</groupId> 
 			<artifactId>commons-collections</artifactId> <version>3.2.2</version> </dependency> -->
 
-		<!-- ###############3 -->
-		<dependency>
-			<groupId>org.mongodb</groupId>
-			<artifactId>mongo-java-driver</artifactId>
-			<version>2.13.0</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.apache.phoenix</groupId>
-			<artifactId>phoenix-core</artifactId>
-			<version>4.5.2-HBase-1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.phoenix</groupId>
-			<artifactId>phoenix-server-client</artifactId>
-			<version>4.5.2-HBase-1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.phoenix</groupId>
-			<artifactId>phoenix-server</artifactId>
-			<version>4.5.2-HBase-1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.phoenix</groupId>
-			<artifactId>phoenix-spark</artifactId>
-			<version>4.5.2-HBase-1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hive.hcatalog</groupId>
-			<artifactId>hive-hcatalog-core</artifactId>
-			<version>1.1.0</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.hive/hive-metastore -->
-		<dependency>
-			<groupId>org.apache.hive</groupId>
-			<artifactId>hive-metastore</artifactId>
-			<version>1.1.0</version>
-		</dependency>
+		<!-- <dependency> <groupId>org.mongodb</groupId> <artifactId>mongo-java-driver</artifactId> 
+			<version>2.13.0</version> </dependency> <dependency> <groupId>org.apache.phoenix</groupId> 
+			<artifactId>phoenix-core</artifactId> <version>4.5.2-HBase-1.0</version> 
+			</dependency> <dependency> <groupId>org.apache.phoenix</groupId> <artifactId>phoenix-server-client</artifactId> 
+			<version>4.5.2-HBase-1.0</version> </dependency> <dependency> <groupId>org.apache.phoenix</groupId> 
+			<artifactId>phoenix-server</artifactId> <version>4.5.2-HBase-1.0</version> 
+			</dependency> <dependency> <groupId>org.apache.phoenix</groupId> <artifactId>phoenix-spark</artifactId> 
+			<version>4.5.2-HBase-1.0</version> </dependency> -->
+
 	</dependencies>
 
 	<build>
@@ -221,6 +196,36 @@
 					</archive>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>
+								${project.build.directory}/lib
+							</outputDirectory>
+							<!-- <excludeGroupIds> org.apache.spark,org.apache.hbase,org.apache.hadoop 
+								</excludeGroupIds> <excludeArtifactIds> </excludeArtifactIds> -->
+							<includeGroupIds>
+
+								org.apache.hive
+							</includeGroupIds>
+
+							<!-- <includeGroupIds> org.mongodb,mysql,org.apache.spark,zhiziyun-v1.5,zhiziyun-ak39 
+								</includeGroupIds> <excludeArtifactIds> spark-core_2.10,spark-streaming_2.10,xerces 
+								</excludeArtifactIds> -->
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
 		</plugins>
 	</build>
 </project>

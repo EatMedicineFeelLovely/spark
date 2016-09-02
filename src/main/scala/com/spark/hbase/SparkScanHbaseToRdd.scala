@@ -1,4 +1,4 @@
-package com.hbase.test
+package com.spark.hbase
 
 import org.apache.hadoop.hbase.client.Scan
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable
@@ -25,12 +25,12 @@ import org.apache.hadoop.hbase.util.Base64
 object SparkScanHbaseToRdd {
   var sc: SparkContext = null
   var conf: Configuration = null
-  System.setProperty("hadoop.home.dir", "E:\\eclipse\\hdplocal2.6.0")
   def main(args: Array[String]): Unit = {
+		System.setProperty("hadoop.home.dir", "F:\\eclipse\\hdplocal2.6.0")
     var tableName = "rt_rtbreport"
     var zookeeper = "solr2.zhiziyun.com,solr1.zhiziyun.com,mongodb3"
     var scans = new Scan
-    var filter = new RowFilter(CompareOp.EQUAL, new RegexStringComparator(".*2016-08-21"))
+    var filter = new RowFilter(CompareOp.EQUAL, new RegexStringComparator(".*2016-08-31"))
     scans.setFilter(filter)
     val sparkConf = new SparkConf()
     .setMaster("local")
@@ -57,7 +57,7 @@ object SparkScanHbaseToRdd {
 
         (r._1.copyBytes(), list)
       })
-    println(a.count())
+    a.foreach(x=>println(new String(x._1)))
 
   }
   def hbaseRDD[U: ClassTag](tableName: String, scan: Scan, f: ((ImmutableBytesWritable, Result)) => U): RDD[U] = {

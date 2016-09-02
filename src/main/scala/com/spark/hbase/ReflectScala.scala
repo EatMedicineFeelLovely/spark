@@ -1,4 +1,4 @@
-package com.test
+package com.spark.hbase
 
 object ReflectScala {
   def main(args: Array[String]): Unit = {
