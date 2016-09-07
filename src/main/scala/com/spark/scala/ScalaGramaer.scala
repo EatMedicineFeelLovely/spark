@@ -10,32 +10,61 @@ import java.io.File
 import scala.collection.Iterator
 import sun.org.mozilla.javascript.internal.ast.Yield
 import scala.reflect.ClassTag
+import java.io.PrintWriter
+import scala.tools.cmd.Opt.Implicit
 
 object ScalaGramaer {
   var list = new ArrayList[String]
+  implicit val aa="a"
+  implicit def testimplicit(implicit i: String) = {
+    10
+  }
+  implicit def testimplicit2(i: String) = {
+    10
+  }
   def main(args: Array[String]): Unit = {
     //listGrammer()
     //mapGrammer()
     //tupleGrammer()
     //IteratorGrammer
-    var b=aas(1,"1",(_+_+_+55))
-    println(b)
-      
+    //var b=aas(1,"1",(_+_+_+55))
+    // writeFile
     //setGrammer
-  }
-  def aas[U: ClassTag](key:Int,value:String,a:(Int,String,Int)=>U)={
-    a(key,value,key)
+    //mapResultTest
     
   }
+def implicitTest(){
+  var a: String = "laal"
+    var i: Int = a
+    println(i)
+    var b:Int="as"
+    
+    testimplicit
+}
+  def mapResultTest() {
+    var a = Set(1, 2, 3, 4)
+    println(a.+(5))
+  }
+  def writeFile() {
+    var fw = new PrintWriter(new File("test2"))
+    fw.write(">>>>>>>>>")
+    fw.close()
+
+  }
+  def aas[U: ClassTag](key: Int, value: String, a: (Int, String, Int) => U) = {
+    a(key, value, key)
+
+  }
   def IteratorGrammer() {
-    var a=Array(Array("1","2"),Array("3","4"),Array("5","6")) //不适用tolist的话，就只能遍历一次
-    var fun1=(x:Array[String])=> true
-    var c=a.toIterator.filter { fun1 }
-    var b=for {i <- a.toIterator 
-         c <- i
-         if c>"2"
-         if c<"6"}
-    yield c
+    var a = Array(Array("1", "2"), Array("3", "4"), Array("5", "6")) //不适用tolist的话，就只能遍历一次
+    var fun1 = (x: Array[String]) => true
+    var c = a.toIterator.filter { fun1 }
+    var b = for {
+      i <- a.toIterator
+      c <- i
+      if c > "2"
+      if c < "6"
+    } yield c
     //b.foreach { println }
     //b.foreach { println }
     c.foreach { println }
