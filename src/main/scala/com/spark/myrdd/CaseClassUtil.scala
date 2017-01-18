@@ -1,4 +1,4 @@
-package com.spark.util
+package com.spark.myrdd
 
 object CaseClassUtil extends Serializable{
 

@@ -1,5 +1,4 @@
 package com.spark.hbase
-
 import org.apache.hadoop.hbase.client.Scan
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable
 import org.apache.hadoop.hbase.client.Result
@@ -24,30 +23,38 @@ import org.apache.hadoop.hbase.util.Base64
 import java.util.HashMap
 import org.apache.hadoop.hbase.util.Bytes
 import scala.collection.JavaConversions._
-object SparkScanHbaseToRdd {
+import org.apache.hadoop.hbase.filter.SingleColumnValueFilter
+import org.apache.hadoop.hbase.filter.CompareFilter
+import org.apache.hadoop.hbase.filter.FilterList
+import org.apache.hadoop.hbase.filter.Filter
+import org.apache.hadoop.hbase.client.Put
+import org.apache.hadoop.hbase.mapreduce.TableOutputFormat
+object GetOutSiteSuNingPCToNewTable {
   var sc: SparkContext = null
   var conf: Configuration = null
+  var zookeeper = "solr2.zhiziyun.com,solr1.zhiziyun.com,mongodb3"
   def main(args: Array[String]): Unit = {
-		System.setProperty("hadoop.home.dir", "F:\\eclipse\\hdplocal2.6.0")
-    var tableName = "rt_rtbreport"
-    var zookeeper = "solr2.zhiziyun.com,solr1.zhiziyun.com,mongodb3"
-    var scans = new Scan
-    var filter = new RowFilter(CompareOp.EQUAL, new RegexStringComparator(".*2016-10-20"))
-    scans.setFilter(filter)
+    val tableName="outsitepctag"
     val sparkConf = new SparkConf()
     .setMaster("local")
-    .setAppName("HBaseDistributedScanExample")
+    .setAppName("GetOutSiteSuNingPCToNewTable")
     sc = new SparkContext(sparkConf)
     conf = HBaseConfiguration.create()
     conf.set("hbase.zookeeper.quorum", zookeeper)
     conf.set("hbase.zookeeper.property.clientPort", "2181")
-    //conf.addResource(new Path("conf/core-site.xml"))
-    //conf.addResource(new Path("conf/hbase-site.xml"))
-    //conf.addResource(new Path("conf/hdfs-site.xml"))
-
-    var a = hbaseRDD2[(String, HashMap[String, String])](
+    
+    var scan = new Scan
+    val  scvf = new SingleColumnValueFilter(  
+        Bytes.toBytes("info"),   
+        Bytes.toBytes("source"),   
+        CompareOp.EQUAL,   
+        Bytes.toBytes("baidupclog"));  
+      scvf.setFilterIfMissing(false);  
+      scan.setFilter(scvf)
+    
+   var a = hbaseRDD2[(String, HashMap[String, String])](
       tableName,
-      scans,
+      scan,
       (r: (ImmutableBytesWritable, Result)) => {
       var rowMap = new HashMap[String, String]()
       var listCells = r._2.listCells()
@@ -58,21 +65,26 @@ object SparkScanHbaseToRdd {
     }
       (rowkey, rowMap)
       })
-    println(a.partitions.size)
-    a.foreach(println)
-
+      println("##### partition num ##### "+a.partitions.size)
+      a.foreach(println)
+/*      conf.set(TableOutputFormat.OUTPUT_TABLE, "suningpctag")
+      val job = new Job(conf)
+      job.setOutputFormatClass(classOf[TableOutputFormat[ImmutableBytesWritable]])
+      println("##########  数据准备放入 hbase suningpctag ########")
+      a.map{x => 
+            val p = new Put(Bytes.toBytes(x._1))
+            for((key,value)<-x._2){
+              p.addColumn("info".getBytes, key.getBytes, value.getBytes)
+            }
+              (new ImmutableBytesWritable, p)
+            }
+       .saveAsNewAPIHadoopDataset(job.getConfiguration)
+       sc.stop()*/
+    println("##########  结束    ########")
   }
-  def hbaseRDD[U: ClassTag](tableName: String, scan: Scan, f: ((ImmutableBytesWritable, Result)) => U): RDD[U] = {
-
-    var job: Job = new Job(conf)
-    TableMapReduceUtil.initCredentials(job)
-    TableMapReduceUtil.initTableMapperJob(tableName, scan, classOf[IdentityTableMapper], null, null, job)
-    sc.newAPIHadoopRDD(job.getConfiguration(),
-      classOf[TableInputFormat],
-      classOf[ImmutableBytesWritable],
-      classOf[Result]).map(f)
-  }
-  def hbaseRDD2[U: ClassTag](tableName: String, scan: Scan, f: ((ImmutableBytesWritable, Result)) => U): RDD[U] = {
+  
+  
+    def hbaseRDD2[U: ClassTag](tableName: String, scan: Scan, f: ((ImmutableBytesWritable, Result)) => U): RDD[U] = {
     var proto = ProtobufUtil.toScan(scan);
     conf.set(TableInputFormat.INPUT_TABLE, tableName)
     conf.set(TableInputFormat.SCAN, Base64.encodeBytes(proto.toByteArray()))

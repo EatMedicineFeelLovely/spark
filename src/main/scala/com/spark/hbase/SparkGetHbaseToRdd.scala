@@ -1,4 +1,4 @@
-package com.spark.demo
+package com.spark.hbase
 
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkConf
@@ -8,6 +8,7 @@ import org.apache.hadoop.hbase.util.Bytes
 import org.apache.hadoop.hbase.mapreduce.TableOutputFormat
 import org.apache.hadoop.mapreduce.Job
 import org.apache.hadoop.hbase.util.MD5Hash
+import org.apache.spark.rdd.RDD.rddToPairRDDFunctions
 
 object SparkReadMoreFiles {
   var sc: SparkContext = null

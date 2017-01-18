@@ -12,15 +12,14 @@ import sun.org.mozilla.javascript.internal.ast.Yield
 import scala.reflect.ClassTag
 import java.io.PrintWriter
 import scala.tools.cmd.Opt.Implicit
-
 object ScalaGramaer {
   var list = new ArrayList[String]
-  implicit val aa="a"
+  //implicit val aa="a"
   implicit def testimplicit(implicit i: String) = {
-    10
+    i.toInt
   }
   implicit def testimplicit2(i: String) = {
-    10
+    i.toInt
   }
   def main(args: Array[String]): Unit = {
     //listGrammer()
@@ -31,15 +30,26 @@ object ScalaGramaer {
     // writeFile
     //setGrammer
     //mapResultTest
-    
+    val a="a"
+    val b="b"
+    println(s"${a}${b}")
+  }
+  def ziptest(){
+    val l1 = 1 to 10 toList
+    val l2 = l1.tail
+    l2.foreach { println }
+    println(">>>>")
+    val l3=l1.zip(l2)
+    l3.foreach { println }
+    println(">>>>")
+    l3.map(p=>((p._2 - p._1),p._2+"-"+p._1)).foreach { println }
   }
 def implicitTest(){
-  var a: String = "laal"
+    var a: String = "laal"
     var i: Int = a
     println(i)
     var b:Int="as"
     
-    testimplicit
 }
   def mapResultTest() {
     var a = Set(1, 2, 3, 4)
