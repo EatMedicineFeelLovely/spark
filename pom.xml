@@ -36,6 +36,17 @@
 			<scope>system</scope>
 			<systemPath>C:\Program Files\Java\jdk1.7.0_79\lib\tools.jar</systemPath>
 		</dependency>
+<!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-log4j-appender -->
+<dependency>
+    <groupId>org.apache.kafka</groupId>
+    <artifactId>kafka-log4j-appender</artifactId>
+    <version>0.9.0.0</version>
+</dependency>
+<dependency>
+  <groupId>org.apache.httpcomponents</groupId>
+  <artifactId>httpasyncclient</artifactId>
+  <version>4.0</version>
+</dependency>
 
 		<dependency>
 			<groupId>org.apache.hbase</groupId>
@@ -48,43 +59,53 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.hive.hcatalog</groupId>
-			<artifactId>hive-hcatalog-core</artifactId>
-			<version>2.1.0</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>javax.servlet</artifactId>
-					<groupId>org.eclipse.jetty.orbit</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hive</groupId>
-			<artifactId>hive-metastore</artifactId>
-			<version>2.1.0</version>
-		</dependency>
+<!-- https://mvnrepository.com/artifact/org.apache.hive.hcatalog/hive-hcatalog-core -->
+<dependency>
+    <groupId>org.apache.hive.hcatalog</groupId>
+    <artifactId>hive-hcatalog-core</artifactId>
+    <version>0.13.1</version>
+</dependency>
+
+	<!-- https://mvnrepository.com/artifact/org.spark-project.hive.hcatalog/hive-hcatalog-core -->
+<!-- <dependency>
+    <groupId>org.spark-project.hive.hcatalog</groupId>
+    <artifactId>hive-hcatalog-core</artifactId>
+    <version>1.2.1.spark</version>
+</dependency> -->
+	
+		
 		<!-- <dependency> <groupId>org.apache.hbase</groupId> <artifactId>hbase-server</artifactId> 
 			<version>1.0.0</version> </dependency> <dependency> <groupId>org.apache.hbase</groupId> 
 			<artifactId>hbase-common</artifactId> <version>1.0.0</version> </dependency> -->
-
-
 		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-core_2.10</artifactId>
-			<version>1.3.0</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>javax.servlet</artifactId>
-					<groupId>org.eclipse.jetty.orbit</groupId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.apache.phoenix</groupId>
+			<artifactId>phoenix-spark</artifactId>
+			<version>4.5.2-HBase-1.0</version>
 		</dependency>
+<!-- https://mvnrepository.com/artifact/com.databricks/spark-csv_2.10 -->
+<dependency>
+    <groupId>com.databricks</groupId>
+    <artifactId>spark-csv_2.10</artifactId>
+    <version>1.0.3</version>
+</dependency>
+ 
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-streaming_2.10</artifactId>
 			<version>1.3.0</version>
 		</dependency>
+<!-- https://mvnrepository.com/artifact/org.apache.spark/spark-core_2.10 -->
+<dependency>
+    <groupId>org.apache.spark</groupId>
+    <artifactId>spark-core_2.10</artifactId>
+    <version>1.3.0</version>
+    <exclusions>
+    	<exclusion>
+    		<artifactId>javax.servlet</artifactId>
+    		<groupId>org.eclipse.jetty.orbit</groupId>
+    	</exclusion>
+    </exclusions>
+</dependency>
 
 		<dependency>
 			<groupId>org.apache.spark</groupId>
@@ -95,26 +116,32 @@
 			<version>1.3.0</version> </dependency> -->
 		<!-- <dependency> <groupId>org.apache.spark</groupId> <artifactId>spark-streaming-flume_2.10</artifactId> 
 			<version>1.3.0</version> </dependency> -->
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-sql_2.10</artifactId>
-			<version>1.3.0</version>
-		</dependency>
+		
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-hive_2.10</artifactId>
 			<version>1.3.0</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-streaming-kafka_2.10</artifactId>
 			<version>1.3.0</version>
 		</dependency>
-		<dependency>
+		
+	<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.1.0</version>
-		</dependency>
+		</dependency> 
+		
+			<!-- <dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.30</version>
+		</dependency> -->
+		
+		
 		<!-- <dependency> <groupId>org.apache.spark</groupId> <artifactId>spark-streaming-kafka_2.10</artifactId> 
 			<version>1.3.0</version> </dependency> -->
 		<!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka_2.11 -->
@@ -170,7 +197,7 @@
 					<encoding>UTF-8</encoding>
 					<resources>
 						<resource>
-							<directory>resources</directory>
+							<directory>src/main/scala</directory>
 						</resource>
 					</resources>
 				</configuration>
@@ -213,10 +240,8 @@
 							<!-- <excludeGroupIds> org.apache.spark,org.apache.hbase,org.apache.hadoop 
 								</excludeGroupIds> <excludeArtifactIds> </excludeArtifactIds> -->
 							<includeGroupIds>
-
-								org.apache.hive
+							org.apache.kafka
 							</includeGroupIds>
-
 							<!-- <includeGroupIds> org.mongodb,mysql,org.apache.spark,zhiziyun-v1.5,zhiziyun-ak39 
 								</includeGroupIds> <excludeArtifactIds> spark-core_2.10,spark-streaming_2.10,xerces 
 								</excludeArtifactIds> -->
