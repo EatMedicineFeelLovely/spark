@@ -51,7 +51,7 @@
 		<dependency>
 			<groupId>org.apache.hbase</groupId>
 			<artifactId>hbase-server</artifactId>
-			<version>1.0.0</version>
+			<version>1.2.0-cdh5.7.5</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>hadoop-common</artifactId>
@@ -60,28 +60,19 @@
 			</exclusions>
 		</dependency>
 <!-- https://mvnrepository.com/artifact/org.apache.hive.hcatalog/hive-hcatalog-core -->
+<!-- https://mvnrepository.com/artifact/org.apache.hive.hcatalog/hive-hcatalog-core -->
 <dependency>
     <groupId>org.apache.hive.hcatalog</groupId>
     <artifactId>hive-hcatalog-core</artifactId>
-    <version>0.13.1</version>
+    <version>1.1.0-cdh5.7.5</version>
 </dependency>
 
-	<!-- https://mvnrepository.com/artifact/org.spark-project.hive.hcatalog/hive-hcatalog-core -->
-<!-- <dependency>
-    <groupId>org.spark-project.hive.hcatalog</groupId>
-    <artifactId>hive-hcatalog-core</artifactId>
-    <version>1.2.1.spark</version>
-</dependency> -->
-	
-		
-		<!-- <dependency> <groupId>org.apache.hbase</groupId> <artifactId>hbase-server</artifactId> 
-			<version>1.0.0</version> </dependency> <dependency> <groupId>org.apache.hbase</groupId> 
-			<artifactId>hbase-common</artifactId> <version>1.0.0</version> </dependency> -->
-		<dependency>
-			<groupId>org.apache.phoenix</groupId>
-			<artifactId>phoenix-spark</artifactId>
-			<version>4.5.2-HBase-1.0</version>
-		</dependency>
+<dependency>
+    <groupId>org.apache.phoenix</groupId>
+    <artifactId>phoenix-spark</artifactId>
+    <version>4.8.0-HBase-1.2</version>
+</dependency>
+
 <!-- https://mvnrepository.com/artifact/com.databricks/spark-csv_2.10 -->
 <dependency>
     <groupId>com.databricks</groupId>
@@ -92,13 +83,13 @@
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-streaming_2.10</artifactId>
-			<version>1.3.0</version>
+			<version>1.6.0-cdh5.7.5</version>
 		</dependency>
 <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-core_2.10 -->
 <dependency>
     <groupId>org.apache.spark</groupId>
     <artifactId>spark-core_2.10</artifactId>
-    <version>1.3.0</version>
+    <version>1.6.0-cdh5.7.5</version>
     <exclusions>
     	<exclusion>
     		<artifactId>javax.servlet</artifactId>
@@ -110,7 +101,7 @@
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-mllib_2.10</artifactId>
-			<version>1.3.0</version>
+			<version>1.6.0-cdh5.7.5</version>
 		</dependency>
 		<!-- <dependency> <groupId>org.apache.spark</groupId> <artifactId>spark-hive_2.10</artifactId> 
 			<version>1.3.0</version> </dependency> -->
@@ -120,15 +111,16 @@
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-hive_2.10</artifactId>
-			<version>1.3.0</version>
+			<version>1.6.0-cdh5.7.5</version>
 		</dependency>
 		
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-streaming-kafka_2.10</artifactId>
-			<version>1.3.0</version>
-		</dependency>
-		
+<!-- https://mvnrepository.com/artifact/org.apache.spark/spark-streaming-kafka_2.10 -->
+<dependency>
+    <groupId>org.apache.spark</groupId>
+    <artifactId>spark-streaming-kafka_2.10</artifactId>
+    <version>1.6.0-cdh5.7.5</version>
+</dependency>
+
 	<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
