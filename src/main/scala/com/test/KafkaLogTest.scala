@@ -2,7 +2,7 @@ package com.test
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import kafka.producer.KafkaLog4jAppender
+
 
 object KafkaLogTest {
   def main(args: Array[String]): Unit = {

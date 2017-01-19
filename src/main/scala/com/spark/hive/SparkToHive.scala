@@ -22,31 +22,43 @@ import org.apache.spark.sql.types.StringType
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.types.IntegerType
 import org.apache.spark.sql.functions._
+import com.spark.hive.CaseClass._
+import org.apache.spark.sql.types._
+import org.apache.spark.sql.api.java.UDF1
 object SparkToHive {
 	System.setProperty("hadoop.home.dir", "F:\\eclipse\\hdplocal2.6.0")
-	case class User2(name:Int,age:Int,sex:Int)
   var hiveconf = new SparkConf().setAppName("sparkhivetest").setMaster("local")
         setHiveConf
   val  sc = new SparkContext(hiveconf)
   val  sqlContext = new HiveContext(sc)
   import  sqlContext.implicits._
+  
   def main(args: Array[String]): Unit = {
     //useHCatOutputFormatToHive
     //secondRDDToFrame
-    insertintoHive
+    //insertintoHive
     //readHiveData
     //creatTable
-    
+    testUDFFunction
   }
+	/**
+	 * 建表
+	 */
   def creatTable(){
     sqlContext.sql("use test1")
     sqlContext.sql("create table test_creat(id int,order_id int,product_id int) row format delimited fields terminated by ','STORED AS TEXTFILE")
   }
+  /**
+   * 读取hive的数据
+   */
   def readHiveData() {
     sqlContext.sql("use default")
-    sqlContext.sql("select * from siteorderlog limit 10").show
+    sqlContext.sql("select count(*) from siteorderlog").show
     sc.stop()
   }
+  /**
+   * 数据写入hive
+   */
   def  insertintoHive(){
      var rdd=sc.parallelize(Array(Map("name"->3,"age"->4,"sex"->5)))
                  .map{x=>User2(name=x("name"),age=x("age"),sex=x("sex"))}
@@ -54,12 +66,24 @@ object SparkToHive {
      //import  sqlContext.implicits._
      //rdd.toDF().registerTempTable("user2")
     //方法2
+      //sqlContext.createDataFrame(rdd).select(count("name")).show
      sqlContext.createDataFrame(rdd).registerTempTable("user2")
-     sqlContext.sql("select * from user2").show
+     //sqlContext.sql("select * from user2").show
      
-     sqlContext.sql("insert into table test1.test_creat "+ 
-                    "select name,age,sex from user2")
+    // sqlContext.sql("insert into table test1.test_creat "+ 
+     //               "select name,age,sex from user2")
         
+  }
+  /**
+   * 自定义UDF
+   */
+  def testUDFFunction(){
+    val makeDT=(name: Int, time: Int, tz: Int) => s"$name : $time : $tz"
+    sqlContext.udf.register("strtoger",makeDT)
+     var rdd=sc.parallelize(Array(Map("name"->3,"age"->4,"sex"->5)))
+               .map{x=>User2(name=x("name"),age=x("age"),sex=x("sex"))}
+    sqlContext.createDataFrame(rdd).registerTempTable("user2")
+    sqlContext.sql("select *,strtoger(name,age,sex) as udf from user2").show
   }
     //第二种指定Schema,需要这个ROW
   def secondRDDToFrame(){

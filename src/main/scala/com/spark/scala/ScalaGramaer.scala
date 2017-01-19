@@ -30,9 +30,7 @@ object ScalaGramaer {
     // writeFile
     //setGrammer
     //mapResultTest
-    val a="a"
-    val b="b"
-    println(s"${a}${b}")
+    println(1.07 < -1.0)
   }
   def ziptest(){
     val l1 = 1 to 10 toList
