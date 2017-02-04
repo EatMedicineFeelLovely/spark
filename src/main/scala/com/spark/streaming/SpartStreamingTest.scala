@@ -9,6 +9,8 @@ import org.apache.spark.streaming.mysql.MysqlManager
 import org.apache.spark.rdd.JdbcRDD
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.streaming.kafka.KafkaClusterManager
+import org.apache.spark.streaming.Time
+import org.apache.spark.rdd.RDD
 
 object SpartStreamingTest {
   var sc: SparkContext = null
@@ -34,7 +36,7 @@ object SpartStreamingTest {
    * 
    */
   def main(args: Array[String]): Unit = {
-    localSparkStream
+    mySparkInputstream
     
     
   }
@@ -60,20 +62,32 @@ object SpartStreamingTest {
 	  //查询条件必须是两边都是等号的  ID >= ? AND ID <= ? ，不然会丢数据
 	  var sql="SELECT id,name FROM test"
 	  val tablename="test"
-	  val rowkeyName="id"
-	  val fromId=1
-	  val partitionNum=2
+	  val timeClounm="id"//主键是什么。流式的话，按理应该是时间
+	  val fromTime=1//从某个时间点开始
+	  val partitionNum=2//分区数
 	  val ssc = new StreamingContext(sc, Seconds(2))
 //
-	  var r=ssc.createDirectMysqlDStream(getConnection, tablename, rowkeyName, 
-			  fromId,sql, partitionNum, sscextractValues)
-	r.printlnDStream("")
+	  var count=0
+	  var r=ssc.createDirectMysqlDStream(getConnection, tablename, timeClounm, 
+			                fromTime,sql, partitionNum, sscextractValues)
+		r.foreachRDD{x=>println("sssssss");Thread.sleep(2000);println("kkkkkkk");}
+		r.foreachRDD{rdd=>
+		      count+=1
+			    println(count)
+		      rdd.foreach(println)
+		      
+		      
+		      if(count<2){
+		    	  Thread.sleep(8000)
+		      }
+	  }
+			    
+	  //r.printlnDStream("")
  //两个流式一起获取数据
-	sql="SELECT id,name FROM test where id>10"                                   
+	/*sql="SELECT id,name FROM test where id>10"                                   
 	var r2=ssc.createDirectMysqlDStream(getConnection, tablename, rowkeyName, 
-                                       fromId,sql, partitionNum, sscextractValues)
-			  
-	r2.printlnDStream("r2 :")
+                                       fromId,sql, partitionNum, sscextractValues)*/
+	/*r2.printlnDStream("r2 :")*/
 			  ssc.start()
 			  ssc.awaitTermination()
   }

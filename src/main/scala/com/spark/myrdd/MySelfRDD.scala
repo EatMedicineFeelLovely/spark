@@ -23,6 +23,18 @@ override protected def getPartitions: Array[Partition] ={
     array
 }
 }
+
+class MySelfRDD2(parent:RDD[String],data:String)extends RDD[String](parent){
+  //这个函数是用来计算RDD中每个的分区的数据
+  override def compute(split: Partition, context: TaskContext):Iterator[String] ={
+    //得到切片的数据
+    parent.iterator(split, context).map { x => data+x }
+  }
+  //getPartitions函数允许开发者为RDD定义新的分区
+override protected def getPartitions: Array[Partition] =
+      parent.partitions
+}
+
 class MySelfPartition(idx: Int, val content: String) extends Partition {
   override def index: Int = idx
 }

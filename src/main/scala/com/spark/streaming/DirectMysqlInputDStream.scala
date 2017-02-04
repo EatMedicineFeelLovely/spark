@@ -12,13 +12,13 @@ class DirectMysqlInputDStream[T:ClassTag](
     getConnection: () => Connection,
     tablename: String,
     idcloumn:String,
-    lowerBound: Long,
+    fromTime: Long,
     sql:String,
     numPartitions: Int,
     mapRow: (ResultSet) => T) extends InputDStream[T](ssc_) with Logging {
   //每个分区的获取条数限制
   val maxRows:Long = context.sparkContext.getConf.getInt("spark.streaming.mysql.maxRetries", 1) * numPartitions * context.graph.batchDuration.milliseconds.toLong /1000
-  var currentOffsets=lowerBound
+  var currentOffsets=fromTime
   val mysqlConn=getConnection()
  // println(ssc_.conf)
    override def start(): Unit = {}

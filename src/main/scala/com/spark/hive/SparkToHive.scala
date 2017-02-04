@@ -39,7 +39,7 @@ object SparkToHive {
     //insertintoHive
     //readHiveData
     //creatTable
-    testUDFFunction
+    insertintoHive
   }
 	/**
 	 * 建表
@@ -70,8 +70,8 @@ object SparkToHive {
      sqlContext.createDataFrame(rdd).registerTempTable("user2")
      //sqlContext.sql("select * from user2").show
      
-    // sqlContext.sql("insert into table test1.test_creat "+ 
-     //               "select name,age,sex from user2")
+     sqlContext.sql("insert into table test1.test_creat "+ 
+                   "select name,age,sex from user2")
         
   }
   /**

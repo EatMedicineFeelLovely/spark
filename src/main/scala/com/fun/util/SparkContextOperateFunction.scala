@@ -19,10 +19,10 @@ trait SparkContextOperateFunction {
     getConnection: () => Connection,
     tablename: String,
     idcloumn:String,
-    lowerBound: Long,
+    fromTime: Long,
     sql:String,
     numPartitions: Int,
     extractValues: (ResultSet) => T)=
-   MysqlManager.creatMysqlInputStream(ssc, getConnection, tablename,idcloumn, lowerBound,sql, numPartitions, extractValues)
+   MysqlManager.creatMysqlInputStream(ssc, getConnection, tablename,idcloumn, fromTime,sql, numPartitions, extractValues)
   }
 }
