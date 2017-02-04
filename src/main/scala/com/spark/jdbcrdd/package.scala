@@ -1,12 +1,11 @@
 package com.spark
 
-import org.apache.spark.SparkContext
-import org.apache.spark.rdd.RDD
 import com.fun.util.RDDOperateFunction
 import com.fun.util.SparkContextOperateFunction
-import com.fun.util.SparkContextOperateFunction
 import com.fun.util.ZzyLmqDataOperateUtil
-package object rdd extends  RDDOperateFunction
+import org.apache.spark.SparkContext
+import org.apache.spark.rdd.RDD
+package object jdbcrdd extends  RDDOperateFunction
                     with SparkContextOperateFunction
                     with ZzyLmqDataOperateUtil{
   //可以通过继承类来获得，也可以直接写

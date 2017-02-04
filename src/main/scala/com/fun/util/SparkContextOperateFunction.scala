@@ -4,7 +4,7 @@ import org.apache.spark.SparkContext
 import scala.reflect.ClassTag
 import java.sql.Connection
 import java.sql.ResultSet
-import com.spark.rdd.JdbcMysqlRDD
+import com.spark.jdbcrdd.JdbcMysqlRDD
 import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.streaming.mysql.MysqlManager
 trait SparkContextOperateFunction {

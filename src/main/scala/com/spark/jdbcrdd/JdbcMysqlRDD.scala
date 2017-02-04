@@ -1,4 +1,4 @@
-package com.spark.rdd
+package com.spark.jdbcrdd
 
 import scala.reflect.ClassTag
 import org.apache.spark.SparkContext
