@@ -3,6 +3,7 @@ package com.spark.myrdd
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
+import org.apache.spark.rdd.CoGroupedRDD
 object TestMain {
     System.setProperty("hadoop.home.dir", "F:\\eclipse\\hdplocal2.6.0")
   def main(args: Array[String]): Unit = {
