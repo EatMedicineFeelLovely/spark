@@ -12,6 +12,8 @@ import sun.org.mozilla.javascript.internal.ast.Yield
 import scala.reflect.ClassTag
 import java.io.PrintWriter
 import scala.tools.cmd.Opt.Implicit
+import scala.reflect.internal.util.StringOps
+import java.math.BigDecimal
 object ScalaGramaer {
   var list = new ArrayList[String]
   //implicit val aa="a"
@@ -30,7 +32,15 @@ object ScalaGramaer {
     // writeFile
     //setGrammer
     //mapResultTest
-    println(1.07 < -1.0)
+   }
+  def regx(){
+    val regex="[0-9]".r
+    println(regex.replaceAllIn("123 admin", "x"))
+  }
+  def ffun(){
+     val a=1.10010011
+    val b=f"$a%.2f"
+    println(b)
   }
   def ziptest(){
     val l1 = 1 to 10 toList

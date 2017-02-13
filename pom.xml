@@ -37,11 +37,11 @@
 			<systemPath>C:\Program Files\Java\jdk1.7.0_79\lib\tools.jar</systemPath>
 		</dependency>
 <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-log4j-appender -->
-<dependency>
+<!--  <dependency>
     <groupId>org.apache.kafka</groupId>
     <artifactId>kafka-log4j-appender</artifactId>
     <version>0.9.0.0</version>
-</dependency>
+</dependency> -->
 <dependency>
   <groupId>org.apache.httpcomponents</groupId>
   <artifactId>httpasyncclient</artifactId>
@@ -56,6 +56,10 @@
 				<exclusion>
 					<artifactId>hadoop-common</artifactId>
 					<groupId>org.apache.hadoop</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-log4j12</artifactId>
+					<groupId>org.slf4j</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -95,6 +99,10 @@
     		<artifactId>javax.servlet</artifactId>
     		<groupId>org.eclipse.jetty.orbit</groupId>
     	</exclusion>
+    	<exclusion>
+    		<artifactId>slf4j-log4j12</artifactId>
+    		<groupId>org.slf4j</groupId>
+    	</exclusion>
     </exclusions>
 </dependency>
 
@@ -119,6 +127,12 @@
     <groupId>org.apache.spark</groupId>
     <artifactId>spark-streaming-kafka_2.10</artifactId>
     <version>1.6.0-cdh5.7.5</version>
+    <exclusions>
+    	<exclusion>
+    		<artifactId>slf4j-log4j12</artifactId>
+    		<groupId>org.slf4j</groupId>
+    	</exclusion>
+    </exclusions>
 </dependency>
 
 	<dependency>

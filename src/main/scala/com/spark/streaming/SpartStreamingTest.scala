@@ -36,23 +36,22 @@ object SpartStreamingTest {
    * 
    */
   def main(args: Array[String]): Unit = {
-    mySparkInputstream
+    localSparkStream
     
     
   }
   def localSparkStream(){
     init()
      val ssc = new StreamingContext(sc, Seconds(2))
-     var topics      = Set("smartadsdeliverylog")
+     var topics      = Set("mobileadsdeliverylog","smartadsdeliverylog","smartadsclicklog", "mobileadsclicklog", "sitevisitlog")
       var kafkaParams = Map[String, String]("metadata.broker.list" -> "kafka1:9092,kafka2:9092,kafka3:9092",
       "serializer.class" -> "kafka.serializer.StringEncoder", "group.id" -> "test", "zookeeper.connect" -> zookeeper)
    val dstream= KafkaClusterManager.createDirectStream(ssc, kafkaParams, topics)
-    dstream.foreachRDD(rdd=>rdd.foreach{x=>
-    val datas=x._2.split(",",-1)
-   val price = if(datas(24).trim.nonEmpty) "b" else "w"
-    println(price)
-    }
-        
+    dstream.foreachRDD(rdd=>
+      
+      println(rdd.partitions.size)
+      
+   
     )
     ssc.start()
 		ssc.awaitTermination()

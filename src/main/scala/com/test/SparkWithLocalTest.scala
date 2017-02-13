@@ -12,14 +12,20 @@ object SparkWithLocalTest {
  System.setProperty("hadoop.home.dir", "F:\\eclipse\\hdplocal2.6.0")
  val correctData=new ArrayList[(String,String,String,Int)] 
  def main(args: Array[String]): Unit = {
-   //init 
-   //runJob
-    println(List(1,2,3,4,5,6).reduce((a,b)=>a+b))
+   init 
+   runJob
  }
  def runJob(){
-   val rdd=sc.parallelize(Array(1,2,3,4,5,6,7,8))
-   val max= rdd.reduce((a,b)=>Math.max(a, b))
-   println(max) 
+   var rdd=sc.parallelize(Array((0,0)))
+     var tmprdd=sc.parallelize(Array((0,1)))
+                  .map{x=>println("@");x}
+     val rrdd=tmprdd.groupByKey
+                    .map{x=>println("##");(x._1,x._2)}
+     rrdd.foreach(println)
+     rrdd.foreach(println)
+         
+   
+
  }
  
   def sparkTest(){

@@ -63,7 +63,7 @@ object KafkaClusterManager {
       ssc,
       kafkaParams,
       consumerOffsets,
-      (mmd: MessageAndMetadata[String, String]) => (mmd.topic, mmd.message))
+      (mmd: MessageAndMetadata[String, String]) => (mmd.key, mmd.message))
 
   }
 
