@@ -42,6 +42,7 @@ object SpartStreamingTest {
   }
   def localSparkStream(){
     init()
+    
      val ssc = new StreamingContext(sc, Seconds(2))
      var topics      = Set("mobileadsdeliverylog","smartadsdeliverylog","smartadsclicklog", "mobileadsclicklog", "sitevisitlog")
       var kafkaParams = Map[String, String]("metadata.broker.list" -> "kafka1:9092,kafka2:9092,kafka3:9092",

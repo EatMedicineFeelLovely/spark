@@ -8,13 +8,13 @@ import org.apache.hadoop.hbase.client.Scan
 import scala.collection.JavaConversions._
 import org.apache.hadoop.hbase.util.Bytes
 import org.apache.hadoop.hbase.util.Base64
+import com.fasterxml.jackson.core.JsonFactory
 object HbaseUtil {
   var hbaseConn: Connection = null
   var zookeeper:String = "cdh-master,node1,node2"
   def main(args: Array[String]): Unit = {
     initHbaseConn
     getKyLinHbaseData
-    
     
     
   }

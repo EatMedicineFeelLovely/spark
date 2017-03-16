@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory
 import org.slf4j.LoggerFactory
 import org.apache.hadoop.conf.Configuration
 import scala.collection.mutable.HashMap
+import org.apache.spark.SparkContext
 
 object KafkaClusterManager {
   var topics: Set[String] = null
@@ -65,6 +66,52 @@ object KafkaClusterManager {
       consumerOffsets,
       (mmd: MessageAndMetadata[String, String]) => (mmd.key, mmd.message))
 
+  }
+  /**
+   * 用于sc创建kafkaRDD
+   */
+  def createKafkaRDD(
+    sc: SparkContext,
+    kafkaParams: Map[String, String],
+    topics: Set[String]) = {
+    this.kafkaParams = kafkaParams
+    this.topics = topics
+    kc = new KafkaCluster(kafkaParams)
+    var fromOffsets: Map[TopicAndPartition, Long] = getConsumerOffsets(topics, kafkaParams.get("group.id").getOrElse("realtimereport"))
+    println(">>>>>>>>>>>>>>>from ")
+    fromOffsets.foreach(println)
+
+    val maxMessagesPerPartition = sc.getConf.getInt("spark.streaming.kafka.maxRatePerPartition", 0) //0表示没限制
+    val lastestOffsets = latestLeaderOffsets(fromOffsets)
+    val untilOffsets = if (maxMessagesPerPartition > 0) {
+      latestLeaderOffsets(fromOffsets).map {
+        case (tp, lo) =>
+          tp -> lo.copy(offset = Math.min(fromOffsets(tp) + maxMessagesPerPartition, lo.offset))
+      }
+    } else lastestOffsets
+    val leaders = untilOffsets.map { case (tp, lo) => tp -> Broker(lo.host, lo.port) }.toMap
+    val offsetRanges = fromOffsets.map {
+      case (tp, fo) =>
+        val uo = untilOffsets(tp)
+        OffsetRange(tp.topic, tp.partition, fo, uo.offset)
+    }.toArray
+    println(">>>>>>>>>>>>>>>offsetRanges ")
+    offsetRanges.foreach(println)
+    
+    KafkaUtils.createRDD[String, String, StringDecoder, StringDecoder, (String, String)](
+      sc,
+      kafkaParams,
+      offsetRanges,
+      leaders,
+      (mmd: MessageAndMetadata[String, String]) => (mmd.key, mmd.message))
+  }
+  protected final def latestLeaderOffsets(consumerOffsets: Map[TopicAndPartition, Long]): Map[TopicAndPartition, LeaderOffset] = {
+    val o = kc.getLatestLeaderOffsets(consumerOffsets.keySet)
+    if (o.isLeft) {
+      throw new SparkException(o.left.toString)
+    } else {
+      o.right.get
+    }
   }
 
   /**
