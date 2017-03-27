@@ -15,11 +15,12 @@ object Test {
     //println(a)
     //t2(a)
     //println(a)
-    val url=new File("C:\\Users\\zhiziyun\\Desktop\\test-0.0.1-SNAPSHOT.jar").toURI().toURL()
+   /* val url=new File("C:\\Users\\zhiziyun\\Desktop\\test-0.0.1-SNAPSHOT.jar").toURI().toURL()
     val d=new URLClassLoader(Array(url), Thread.currentThread().getContextClassLoader())
    val a= d.loadClass("test.HelloWord")
    a.getMethod("printwoed",classOf[String]).invoke(a.newInstance(),"hello world")
-   
+   */
+
   }
   def t1(a: HashMap[String, String]) {
     a.clear()
