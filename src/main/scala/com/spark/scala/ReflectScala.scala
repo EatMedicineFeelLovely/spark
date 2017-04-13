@@ -11,6 +11,8 @@ import org.apache.hadoop.fs.FsUrlStreamHandlerFactory
 
 object ReflectScala {
   def main(args: Array[String]): Unit = {
+    //val c=Class.forName("com.dmp.dataflow.fg.feture.FG1FeatureCalculate")
+   // c.getMethod("printwoed", classOf[String]).invoke(a.newInstance(), "hello world")
     loadHdfsJar
 
   }
