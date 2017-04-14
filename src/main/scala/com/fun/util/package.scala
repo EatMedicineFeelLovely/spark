@@ -12,7 +12,6 @@ package object util extends  RDDOperateFunction
   implicit class SparkContextNewFunction(sparkContext: SparkContext) {
     def lmq(name: String) = ""
   }
-  
   //隐式参数的使用
   implicit class RDDNewFunction[T](rdd: RDD[T]) {
     def lmq3(str: String)(implicit impl:Array[T])=rdd.map { x => x + " : "+impl(0) }

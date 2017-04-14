@@ -8,6 +8,7 @@ import scala.util.parsing.json.JSON
 import scala.collection.mutable.ArrayBuffer
 import java.util.ArrayList
 import scala.collection.mutable.HashMap
+import org.apache.hadoop.hbase.client.Put
 object SparkSQLDemo {
 def main(args: Array[String]): Unit = {
   var conf = new SparkConf()
@@ -21,7 +22,7 @@ System.setProperty("hadoop.home.dir", "E:\\eclipse\\hdplocal2.6.0")
 
 }
 def testDataFram(sc:SparkContext,sql:SQLContext){
-    val data=sc.textFile("E:\\ZhiziYun\\smartadsclicklog\\smartadsclicklog")
+    val data=sc.textFile("F:\\data\\smartadsclicklog")
     val fram=data.map { x => {x.split(",")}}.map { x =>Smartadsclicklog(
            clicktime=x(0),zzid=x(1),siteid=x(2),uid=x(3),
            ip=x(4),originurl=x(5),pageurl=x(6),campaign=x(7),
@@ -30,22 +31,22 @@ def testDataFram(sc:SparkContext,sql:SQLContext){
            bidid=x(16)) }
     println(fram.count())
     fram.foreach { println }
-    //data.map{ a => println}
-    //dataf.foreach { println }
-     /*println(a)
-     val x=a.split(",")
-       Smartadsclicklog(
-           x(0),x(1),x(2),x(3),
-           x(4),x(5),x(6),x(7),
-           x(8),x(9),x(10),x(11),
-           x(12),x(13),x(14),x(15),
-           x(16))
-      }*/
     val df=sql.createDataFrame(fram)
-    df.registerTempTable("Smartadsclicklog")
-    sql.sql("select * from Smartadsclicklog").show()
+    df.rdd.foreach(println)
+    //df.registerTempTable("Smartadsclicklog")
+    //sql.sql("select * from Smartadsclicklog").show()
     println(">>>>>>>>>>>>>>>>>..")
   }
+/*def transStrToPut(row:Row,cols:Array[String])={
+      val r=cols.zip(row.toSeq)
+      r.map{case(colname,value)=>
+      val put=new Put()  
+      
+      }
+      val put = new Put(cells(0).getBytes);
+      put.addColumn(cells(0).getBytes, cells(0).getBytes, cells(0).getBytes)
+      put
+    }*/
   case class Smartadsclicklog(clicktime:String,zzid:String,siteid:String,uid:String,
     ip:String,originurl:String,pageurl:String,campaign:String,
     template:String,pubdomain:String,visitor:String,useragent:String,

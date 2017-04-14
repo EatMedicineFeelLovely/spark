@@ -12,17 +12,21 @@ object HiveContextTest {
   val  sc = new SparkContext(hiveconf)
   val  sqlContext = new HiveContext(sc)
   def main(args: Array[String]): Unit = {
-    var rdd=sc.parallelize(Array(Map("name"->1,"age"->2,"sex"->3))).map{x=>User2(name=x("name"),age=x("age"),sex=x("sex"))}
+    sqlContext.sql("select * from  smartadsclicklog where statdate='20170414' limit 50").show
+    
+    
+    
+   /* var rdd=sc.parallelize(Array(Map("name"->1,"age"->2,"sex"->3))).map{x=>User2(name=x("name"),age=x("age"),sex=x("sex"))}
     sqlContext.createDataFrame(rdd).registerTempTable("user2")
-    sqlContext.sql("select * from user2").show
-    sc.stop()
+    sqlContext.sql("show tables").show
+    sc.stop()*/
   }
    def setHiveConf() {
     //加一下的信息，就可以不用使用hive-site.xml了
     //信息在/etc/hive/conf/hive-site.xml里面
-    System.setProperty("hive.metastore.uris", "thrift://CDH-Master:9083")
+    System.setProperty("hive.metastore.uris", "thrift://mongodb3:9083")
     System.setProperty("hive.metastore.warehouse.dir", "/user/hive/warehouse")
-    System.setProperty("hive.zookeeper.quorum", "CDH-Master,Node2,Node1")
+    System.setProperty("hive.zookeeper.quorum", "mongodb3,solr2.zhiziyun.com,solr1.zhiziyun.com")
     System.setProperty("hive.zookeeper.client.port", "2181")
     
     

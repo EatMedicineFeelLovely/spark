@@ -7,6 +7,7 @@ import org.apache.spark.streaming.dstream.InputDStream
 import java.sql.Connection
 import org.apache.spark.Logging
 import org.apache.spark.streaming.Time
+import org.apache.spark.streaming.scheduler.RateController
 class DirectMysqlInputDStream[T:ClassTag](
     @transient ssc_ : StreamingContext,
     getConnection: () => Connection,
@@ -33,6 +34,7 @@ class DirectMysqlInputDStream[T:ClassTag](
     //如果没有新数据就nextId<currentOffsets
     val nextId=if( rs.next()) rs.getInt(1) else currentOffsets-1
     if((nextId-currentOffsets)>maxRows) maxRows+currentOffsets else nextId
+    
   }
 
    override def compute(validTime: Time): Option[JdbcSparkStreamRDD[T]] = {

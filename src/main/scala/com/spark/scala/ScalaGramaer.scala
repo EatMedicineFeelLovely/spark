@@ -32,6 +32,15 @@ object ScalaGramaer {
     // writeFile
     //setGrammer
     //mapResultTest
+    val a=new ArrayBuffer[Int]()
+    a.++=(Array(1,2,3,4,5))
+    val b=a.toIterator
+    
+    val c=b.map { x => x+10 }
+    
+    c.foreach { println }
+    
+    
    }
   def regx(){
     val regex="[0-9]".r

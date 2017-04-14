@@ -24,7 +24,8 @@ object SparkWithLocalTest {
       .setMaster("local")
       .setAppName("Test")
     sc = new SparkContext(sparkConf) 
-   sc.textFile("file:///C:\\Users\\zhiziyun\\Desktop\\1.txt").foreach { println }
+   
+   
    
  }
  

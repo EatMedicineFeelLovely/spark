@@ -45,6 +45,7 @@ object SparkScanHbaseToRdd {
     //conf.addResource(new Path("conf/hbase-site.xml"))
     //conf.addResource(new Path("conf/hdfs-site.xml"))
 
+    
     var a = hbaseRDD2[(String, HashMap[String, String])](
       tableName,
       scans,

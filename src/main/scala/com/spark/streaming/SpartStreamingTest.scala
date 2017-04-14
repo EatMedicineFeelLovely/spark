@@ -66,10 +66,11 @@ object SpartStreamingTest {
 	  val fromTime=1//从某个时间点开始
 	  val partitionNum=2//分区数
 	  val ssc = new StreamingContext(sc, Seconds(2))
-//
+
 	  var count=0
 	  var r=ssc.createDirectMysqlDStream(getConnection, tablename, timeClounm, 
 			                fromTime,sql, partitionNum, sscextractValues)
+		
 		r.foreachRDD{x=>println("sssssss");Thread.sleep(2000);println("kkkkkkk");}
 		r.foreachRDD{rdd=>
 		      count+=1
