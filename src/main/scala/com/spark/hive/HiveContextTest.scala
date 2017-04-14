@@ -3,12 +3,13 @@ package com.spark.hive
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.hive.HiveContext
+import org.apache.spark.sql.DataFrame
 
 object HiveContextTest {
   System.setProperty("hadoop.home.dir", "F:\\eclipse\\hdplocal2.6.0")
 	case class User2(name:Int,age:Int,sex:Int)
   var hiveconf = new SparkConf().setAppName("sparkhivetest").setMaster("local")
-        setHiveConf
+  setHiveConf
   val  sc = new SparkContext(hiveconf)
   val  sqlContext = new HiveContext(sc)
   def main(args: Array[String]): Unit = {
@@ -22,12 +23,38 @@ object HiveContextTest {
     sc.stop()*/
   }
    def setHiveConf() {
-    //加一下的信息，就可以不用使用hive-site.xml了
+    //加一下的信息，就可以不用使用hive-site.xml和hdfs-site.xml了
     //信息在/etc/hive/conf/hive-site.xml里面
+     //加配置文件是最保险的。有时候加下面的也不成功
     System.setProperty("hive.metastore.uris", "thrift://mongodb3:9083")
     System.setProperty("hive.metastore.warehouse.dir", "/user/hive/warehouse")
     System.setProperty("hive.zookeeper.quorum", "mongodb3,solr2.zhiziyun.com,solr1.zhiziyun.com")
     System.setProperty("hive.zookeeper.client.port", "2181")
+    
+    System.setProperty("dfs.nameservices", "nameservice-zzy")
+    System.setProperty("dfs.client.failover.proxy.provider.nameservice-zzy", "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider")
+    System.setProperty("dfs.ha.automatic-failover.enabled.nameservice-zzy", "true")
+    System.setProperty("ha.zookeeper.quorum", "mongodb3:2181,solr1.zhiziyun.com:2181,solr2.zhiziyun.com:2181")
+    System.setProperty("dfs.ha.namenodes.nameservice-zzy", "namenode47,namenode237")
+    System.setProperty("dfs.namenode.rpc-address.nameservice-zzy.namenode47", "mongodb3:8020")
+    System.setProperty("dfs.namenode.servicerpc-address.nameservice-zzy.namenode47", "mongodb3:8022")
+    System.setProperty("dfs.namenode.http-address.nameservice-zzy.namenode47", "mongodb3:50070")
+    System.setProperty("dfs.namenode.https-address.nameservice-zzy.namenode47", "mongodb3:50470")
+    System.setProperty("dfs.namenode.rpc-address.nameservice-zzy.namenode237", "solr2.zhiziyun.com:8020")
+    System.setProperty("dfs.namenode.servicerpc-address.nameservice-zzy.namenode237", "solr2.zhiziyun.com:8022")
+    System.setProperty("dfs.namenode.http-address.nameservice-zzy.namenode237", "solr2.zhiziyun.com:50070")
+    System.setProperty("dfs.namenode.https-address.nameservice-zzy.namenode237", "solr2.zhiziyun.com:50470")
+    System.setProperty("dfs.namenode.http-address.nameservice-zzy.namenode47", "mongodb3:50070")
+    System.setProperty("dfs.client.use.datanode.hostname", "false")
+    
+    System.setProperty("fs.permissions.umask-mode", "022")
+    System.setProperty("dfs.namenode.acls.enabled", "false")
+    System.setProperty("dfs.client.read.shortcircuit", "false")
+    System.setProperty("dfs.namenode.acls.enabled", "false")
+    System.setProperty("dfs.domain.socket.path", "/var/run/hdfs-sockets/dn")
+    System.setProperty("dfs.client.read.shortcircuit.skip.checksum", "false")
+    System.setProperty("dfs.client.domain.socket.data.traffic", "false")
+    System.setProperty("dfs.datanode.hdfs-blocks-metadata.enabled", "true")
     
     
     System.setProperty("hive.metastore.client.socket.timeout", "300")
