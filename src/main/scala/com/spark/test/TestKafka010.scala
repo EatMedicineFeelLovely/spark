@@ -6,6 +6,8 @@ import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.streaming.Seconds
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
+import org.apache.spark.streaming.kafka.KafkaUtils
+
 /*import org.apache.spark.streaming.kafka010.KafkaUtils*/
 /*import org.apache.spark.streaming.kafka010._*/
 /*import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
@@ -21,6 +23,7 @@ object TestKafka010 {
 )
 val topics = Array("realtimereport_box")
  def main(args: Array[String]): Unit = {
+    val sc=new SparkContext(new SparkConf().setMaster("local").setAppName("Test"))
     
     
   }
