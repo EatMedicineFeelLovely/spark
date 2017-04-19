@@ -1,4 +1,4 @@
-package com.spark.test
+/*package com.spark.test
 
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkConf
@@ -40,4 +40,4 @@ def kafka010(){
     ssc.awaitTermination()
        
   }
-}
+}*/
