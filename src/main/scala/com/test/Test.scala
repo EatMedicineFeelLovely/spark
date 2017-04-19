@@ -23,18 +23,7 @@ object Test extends Utilities{
    val a= d.loadClass("test.HelloWord")
    a.getMethod("printwoed",classOf[String]).invoke(a.newInstance(),"hello world")
    */
-    val v_l5mon_date = getDateStr(getNMonthAgo(getNDayAgo(1), 4))
-    println(v_l5mon_date)
-    val v_data_date = getDateStr_(getNDayAgo(1))
-    println(v_data_date)
-    val v_next_date = getDateStr_()
-    println(v_next_date)
-    val v_data_day = getDateStr_()
-    println(v_data_day)
-    val v_mth_stt = getMonthStart()
-    println(v_mth_stt)
-    val v_mth_end = getMonthEnd()
-    println(v_mth_end)
+    
   }
   def t1(a: HashMap[String, String]) {
     a.clear()

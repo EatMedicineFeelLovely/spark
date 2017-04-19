@@ -72,6 +72,8 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
+		
 		<!-- https://mvnrepository.com/artifact/org.apache.hive.hcatalog/hive-hcatalog-core -->
 		<!-- https://mvnrepository.com/artifact/org.apache.hive.hcatalog/hive-hcatalog-core -->
 		<dependency>

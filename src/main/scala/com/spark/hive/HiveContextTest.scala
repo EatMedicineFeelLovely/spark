@@ -13,8 +13,7 @@ object HiveContextTest {
   val  sc = new SparkContext(hiveconf)
   val  sqlContext = new HiveContext(sc)
   def main(args: Array[String]): Unit = {
-    sqlContext.sql("select * from  smartadsclicklog where statdate='20170414' limit 50").show
-    
+    val df=sqlContext.sql("select * from  smartadsclicklog where statdate='20170414' limit 50")
     
     
    /* var rdd=sc.parallelize(Array(Map("name"->1,"age"->2,"sex"->3))).map{x=>User2(name=x("name"),age=x("age"),sex=x("sex"))}

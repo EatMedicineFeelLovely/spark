@@ -44,8 +44,7 @@ object SparkScanHbaseToRdd {
     //conf.addResource(new Path("conf/core-site.xml"))
     //conf.addResource(new Path("conf/hbase-site.xml"))
     //conf.addResource(new Path("conf/hdfs-site.xml"))
-
-    
+   
     var a = hbaseRDD2[(String, HashMap[String, String])](
       tableName,
       scans,
@@ -56,7 +55,7 @@ object SparkScanHbaseToRdd {
       for (cell <- listCells) {
         var column = new String(cell.getQualifierArray, cell.getQualifierOffset, cell.getQualifierLength)
         rowMap.put(column, new String(cell.getValueArray, cell.getValueOffset, cell.getValueLength))
-    }
+    	}
       (rowkey, rowMap)
       })
     println(a.partitions.size)

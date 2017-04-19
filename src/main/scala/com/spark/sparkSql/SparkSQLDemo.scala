@@ -9,17 +9,39 @@ import scala.collection.mutable.ArrayBuffer
 import java.util.ArrayList
 import scala.collection.mutable.HashMap
 import org.apache.hadoop.hbase.client.Put
+import org.apache.hadoop.hbase.HBaseConfiguration
+import org.apache.hadoop.hbase.spark.HBaseContext
 object SparkSQLDemo {
 def main(args: Array[String]): Unit = {
   var conf = new SparkConf()
                     .setMaster("local")
                     .setAppName("Spark Pi")
 System.setProperty("hadoop.home.dir", "E:\\eclipse\\hdplocal2.6.0")
-
-  var sc = new SparkContext(conf)
-  var sql=new SQLContext(sc)
-  testDataFram(sc,sql)
-
+    val config = HBaseConfiguration.create()
+    config.set("hbase.zookeeper.quorum", "solr2.zhiziyun.com,solr1.zhiziyun.com,mongodb3")
+    config.set("hbase.zookeeper.property.clientPort", "2181")
+    var sc = new SparkContext(conf)
+  
+    val hbaseContext = new HBaseContext(sc, config, null)
+    var sql=new SQLContext(sc)
+    
+  //testDataFram(sc,sql)
+  
+  
+  def catalog = s"""{
+       |"table":{"namespace":"default", "name":"FG_RESULT"},
+       |"rowkey":"fg001.buydays",
+       |"columns":{
+         |"col0":{"cf":"info", "col":"fg001.buydays", "type":"string"},
+         |"col1":{"cf":"info", "col":"fg001.buydays", "type":"int"}
+       |}
+     |}""".stripMargin
+  
+  sql.read.options(Map("catalog"->catalog))
+  .format("org.apache.hadoop.hbase.spark")
+  .load()
+  .select("col1")
+  .show()
 }
 def testDataFram(sc:SparkContext,sql:SQLContext){
     val data=sc.textFile("F:\\data\\smartadsclicklog")
@@ -51,4 +73,15 @@ def testDataFram(sc:SparkContext,sql:SQLContext){
     ip:String,originurl:String,pageurl:String,campaign:String,
     template:String,pubdomain:String,visitor:String,useragent:String,
     slot:String,unit:String,creative:String,ext:String,bidid:String)
+}
+case class HBaseRecord(
+  col0: String,
+  col1: Int)
+
+object HBaseRecord {
+  def apply(i: Int, t: Int): HBaseRecord = {
+    val s = s"""row${"%03d".format(i)}"""
+    HBaseRecord(s,
+      i)
+  }
 }

@@ -5,7 +5,7 @@ import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.types.StructField
 import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.types.StringType
+import org.apache.spark.sql.types._
 import org.apache.spark.sql.Row
 import scala.collection.mutable.ArrayBuffer
 import java.util.HashMap
@@ -14,7 +14,6 @@ import java.util.ArrayList
 import java.util.Map
 import java.util.List
 import com.spark.sparkSql.CaseClassUtil._
-
 object SparkListToDataFrame {
     var conf = new SparkConf() .setMaster("local").setAppName("Spark Pi")
     var sc = new SparkContext(conf)
@@ -38,7 +37,8 @@ object SparkListToDataFrame {
     map.put("name", "lmq")
     map.put("address", "莆田")
     arraybuffer+=map
-    var liens=sc.parallelize(arraybuffer).map(t=>Address(name=t.get("address"),t.get("address"),phone=t.get("address")))
+    var liens=sc.parallelize(arraybuffer)
+    .map(t=>Address(name=t.get("address"),t.get("address"),phone=t.get("address")))
     var addressData=sqlContext.createDataFrame(liens)
     addressData.registerTempTable("Address")
     show("select * from Address")
@@ -59,10 +59,15 @@ object SparkListToDataFrame {
     map.put("phone", "10312123")
     arraybuffer+=map
     var liens=sc.parallelize(arraybuffer)
-              .map(p=>Row(p.get("name"),p.get("phone"),p.get("age")))
+              .map{p=>val r=Row(p.get("name"),p.get("phone"),p.get("age"));
+              Row(Array(1,2))
+              r
+  }
     var schemaString = Array("name","phone","age")
-    var a=StructField("", StringType, true)
-    var columns=schemaString.map(fieldName => StructField(fieldName, StringType, true))
+    val types=Array(StringType,IntegerType,DoubleType)
+    var columns=schemaString.zip(types).map{case(name,tp)=>
+      StructField(name, "", true)
+    }
     val schema = StructType(columns)
     var schemaData=sqlContext.createDataFrame(liens, schema)
     schemaData.registerTempTable("Detail")
@@ -71,6 +76,14 @@ object SparkListToDataFrame {
   }
   def show(sql:String){
     sqlContext.sql(sql).show()
+  }
+  implicit def strToStringType(str:String):DataType={
+    str match {
+      case "String" => StringType
+      case "Int" => IntegerType
+      case _ => StringType
+    }
+    
   }
 }  
 
