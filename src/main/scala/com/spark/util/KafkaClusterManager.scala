@@ -156,7 +156,7 @@ object KafkaClusterManager {
     offsets
 
   }
-  def getRDDConsumerOffsets(data: RDD[(String, String)]) = {
+  def getRDDConsumerOffsets[T](data: RDD[T]) = {
     var consumoffsets = Map[TopicAndPartition, Long]()
     val offsetsList = data.asInstanceOf[HasOffsetRanges].offsetRanges
     for (offsets <- offsetsList) {
@@ -169,7 +169,10 @@ object KafkaClusterManager {
    * 更新zookeeper上的消费offsets
    * @param rdd
    */
-  def updateConsumerOffsets(topicAndPartition: Map[TopicAndPartition, Long]): Unit = {
-    val o = kc.setConsumerOffsets(groupId, topicAndPartition)
+  def updateConsumerOffsets(kp: Map[String, String],topicAndPartition: Map[TopicAndPartition, Long]): Unit = {
+    if(kc==null){
+      kc=new KafkaCluster(kp)
+    }
+    val o = kc.setConsumerOffsets(kp.get("group.id").get, topicAndPartition)
   }
 }

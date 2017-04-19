@@ -23,7 +23,7 @@ object Test extends Utilities{
    val a= d.loadClass("test.HelloWord")
    a.getMethod("printwoed",classOf[String]).invoke(a.newInstance(),"hello world")
    */
-    
+   
   }
   def t1(a: HashMap[String, String]) {
     a.clear()
