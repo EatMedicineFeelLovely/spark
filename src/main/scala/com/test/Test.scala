@@ -9,6 +9,7 @@ import java.net.URL
 import scala.collection.JavaConverters._
 import scala.collection.JavaConversions._
 import com.test.Utilities
+import org.json.JSONObject
 object Test extends Utilities{
   def main(args: Array[String]): Unit = {
     //println(fun((1,1)))
@@ -23,6 +24,10 @@ object Test extends Utilities{
    val a= d.loadClass("test.HelloWord")
    a.getMethod("printwoed",classOf[String]).invoke(a.newInstance(),"hello world")
    */
+    val j=new JSONObject("""{"a":null}""")
+    println(j)
+    val a=j.get("a")
+    println(a.getClass().toString())
    
   }
   def t1(a: HashMap[String, String]) {

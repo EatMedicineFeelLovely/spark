@@ -143,6 +143,7 @@ object KafkaClusterManager {
             } else offsets += (tp -> n) //消费者的offsets正常
         })
       } else { // 没有消费过 ，这是一个新的消费group id
+        println(">>>>>>>>>>>>>>>>>>>>>这是一个新消费者："+groupId)
         val reset = kafkaParams.get("auto.offset.reset").map(_.toLowerCase)
         var leaderOffsets: Map[TopicAndPartition, LeaderOffset] = null
         if (reset == Some("smallest")) {
@@ -150,6 +151,7 @@ object KafkaClusterManager {
         } else {
           leaderOffsets = kc.getLatestLeaderOffsets(partitions).right.get
         }
+        //如果这里不对这个新消费者进行updateConsumerOffsets的话，那下次再来还是个新消费者
         leaderOffsets.foreach { case (tp, offset) => offsets += (tp -> offset.offset) }
       }
     })
