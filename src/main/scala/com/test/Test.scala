@@ -24,11 +24,8 @@ object Test extends Utilities{
    val a= d.loadClass("test.HelloWord")
    a.getMethod("printwoed",classOf[String]).invoke(a.newInstance(),"hello world")
    */
-    val j=new JSONObject("""{"a":null}""")
-    println(j)
-    val a=j.get("a")
-    println(a.getClass().toString())
-   
+    val a=Map("a"->1)
+    println(a.get("b"))
   }
   def t1(a: HashMap[String, String]) {
     a.clear()
