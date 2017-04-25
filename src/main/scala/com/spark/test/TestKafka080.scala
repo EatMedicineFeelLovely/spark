@@ -8,6 +8,8 @@ import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.spark.streaming.kafka.KafkaUtils
 import kafka.message.MessageAndMetadata
 import kafka.serializer.StringDecoder
+import org.apache.spark.sql.SparkSession
+
 object TestKafka080 {
   var kafkaParams = Map[String, String](
     "metadata.broker.list" -> "kafka1:9092,kafka2:9092,kafka3:9092",
@@ -17,7 +19,14 @@ object TestKafka080 {
 
   def main(args: Array[String]): Unit = {
     run()
-
+   val spark = SparkSession.builder().getOrCreate()
+   
+    import spark.implicits._
+    //kafak
+   val a= spark.readStream.format("kafka")
+    .load()
+   
+    spark.read.textFile("examples/src/main/resources/people.json")
   }
   def run() {
     val sc = new SparkContext(new SparkConf().setMaster("local").setAppName("Test"))
