@@ -28,6 +28,10 @@ System.setProperty("hadoop.home.dir", "E:\\eclipse\\hdplocal2.6.0")
     .registerTempTable("test")
     
     val data2=sc.parallelize(Array[String]("a","b"))
+    data2.toDF().rdd.map{x=>
+      
+    
+    x}
     data2.map {x=>HBaseRecord(x,1) }
     .toDF
     .registerTempTable("test_tmp")

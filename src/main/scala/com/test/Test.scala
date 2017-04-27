@@ -8,8 +8,9 @@ import java.net.URLClassLoader
 import java.net.URL
 import scala.collection.JavaConverters._
 import scala.collection.JavaConversions._
-import com.test.Utilities
+import scala.collection.immutable.Map
 import org.json.JSONObject
+import org.apache.hadoop.hbase.mapreduce.TableInputFormat
 object Test extends Utilities{
   def main(args: Array[String]): Unit = {
     //println(fun((1,1)))
@@ -24,8 +25,7 @@ object Test extends Utilities{
    val a= d.loadClass("test.HelloWord")
    a.getMethod("printwoed",classOf[String]).invoke(a.newInstance(),"hello world")
    */
-    val a=Map("a"->1)
-    println(a.get("b"))
+    
   }
   def t1(a: HashMap[String, String]) {
     a.clear()

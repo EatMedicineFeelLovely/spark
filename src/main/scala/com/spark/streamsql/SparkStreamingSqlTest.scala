@@ -6,6 +6,9 @@ import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.streaming.Seconds
 import org.apache.spark.streaming.kafka.KafkaClusterManager
 import org.apache.spark.sql.SQLContext
+import org.apache.spark.streaming.State
+import org.apache.spark.streaming.StateSpec
+import org.apache.spark.sql.Row
 object SparkStreamingSqlTest {
   var sc: SparkContext = null
   var zookeeper: String = "solr2.zhiziyun.com,solr1.zhiziyun.com,mongodb3"
@@ -23,45 +26,37 @@ object SparkStreamingSqlTest {
     run(ssc)
   }
   def run(ssc: StreamingContext) {
-    val topics = Set("test")
+    val topics = Set("realtimereport_box")
     val sql=new SQLContext(sc)
     import sql.implicits._
-    val data=sc.parallelize(Array[String]()).map{_=>Reatime(null,0,0)}
-    sql.createDataFrame(data)
-              .toDF
-              .registerTempTable("realtime")
+    val initialRDD = ssc.sparkContext.parallelize(List(("a", 100,0), ("b", 10,0)))
+    
     val dstream = KafkaClusterManager.createDirectStream(ssc, kafkaParams, topics)
-    
-    dstream.foreachRDD { rdd =>
-      val topicAndPartition = KafkaClusterManager.getRDDConsumerOffsets(rdd)
-     rdd.map{case(rowkey,d)=>
-      val arr=d.split(",")
-      Reatime(arr(0),arr(1).toInt,arr(2).toInt)}
-     .toDF
-     .registerTempTable("realtimetmp")
-     
-     sql.sql("""
-       select IF(a.rowkey is NULL,b.rowkey,a.rowkey) as rowkey,
-         IF(a.bao is NULL,b.bao,IF(b.bao is NULL,a.bao,a.bao+b.bao)) as bao,
-         IF(a.click is NULL,b.click,IF(b.click is NULL,a.click,a.click+b.click)) as click 
-        from realtime a full join 
-       (select rowkey,sum(bao) as bao,sum(click) as click 
-       from realtimetmp group by rowkey) b
-       on a.rowkey=b.rowkey
-       """).registerTempTable("realtime")
-       sql.cacheTable("realtime")
-       sql.sql("select * from realtime").show
-     KafkaClusterManager.updateConsumerOffsets(kafkaParams, topicAndPartition)
-    }
-    
+    dstream.transform { rdd =>
+     val topicAndPartition = KafkaClusterManager.getRDDConsumerOffsets(rdd)
+     rdd.map{case(rowkey,d)=>val arr=d.split(",");Reatime(arr(0),arr(1).toInt,arr(2).toInt)}
+        .toDF
+        .registerTempTable("realtimetmp")
+     sql.sql("""select rowkey,sum(bao) as bao,sum(click) as click from realtimetmp group by rowkey""")
+        .rdd
+        .map { x => (x.getAs[String]("rowkey"),(x.getAs[Long]("bao"),x.getAs[Long]("click"))) }
+     //KafkaClusterManager.updateConsumerOffsets(kafkaParams, topicAndPartition)
+    }.mapWithState(StateSpec.function(mappingFunc)).print
     ssc.start()
     ssc.awaitTermination()
   }
   def init {
     val sparkConf = new SparkConf()
-      .setMaster("local[3]") //3 is cores num,
+      .setMaster("local[2]") //3 is cores num,
       .setAppName("UpdateStateByKeyTest")
     sc = new SparkContext(sparkConf)
+  }
+   val mappingFunc = (table: String, count: Option[(Long, Long)], state: State[(Long, Long)]) => {
+    val d = count.getOrElse((0L, 0L))
+    val pd = state.getOption.getOrElse((0L, 0L))
+    val output = (table, (d._1 + pd._1, d._2 + pd._2))
+    state.update((d._1 + pd._1, d._2 + pd._2))
+    output
   }
   case class Reatime(rowkey:String,
       bao:Int,

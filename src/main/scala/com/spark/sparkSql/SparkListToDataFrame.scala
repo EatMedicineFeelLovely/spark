@@ -14,6 +14,7 @@ import java.util.ArrayList
 import java.util.Map
 import java.util.List
 import com.spark.sparkSql.CaseClassUtil._
+import org.apache.spark.mllib.linalg.DenseVector
 object SparkListToDataFrame {
     var conf = new SparkConf() .setMaster("local").setAppName("Spark Pi")
     var sc = new SparkContext(conf)
