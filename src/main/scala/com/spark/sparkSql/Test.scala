@@ -14,8 +14,8 @@ object Test {
   import spark.implicits._
   def main(args: Array[String]): Unit = {
     val data = sc.parallelize(Array[String]("1","2"))
-    data.map{x=>test(Array(1,2),x)}.toDF().foreach { println }
-    
+    val df=data.map{x=>test(Array(1,2),x)}.toDF()
+    df.registerTempTable("")
     
     
     

@@ -24,17 +24,17 @@
 	</properties>
 
 	<dependencies>
+	<!-- https://mvnrepository.com/artifact/org.apache.kylin/kylin-jdbc -->
+<dependency>
+    <groupId>org.apache.kylin</groupId>
+    <artifactId>kylin-jdbc</artifactId>
+    <version>2.0.0</version>
+</dependency>
+	
 		<dependency>
 			<groupId>sqlline</groupId>
 			<artifactId>sqlline</artifactId>
 			<version>1.1.9</version>
-		</dependency>
-		<dependency>
-			<groupId>jdk.tools</groupId>
-			<artifactId>jdk.tools</artifactId>
-			<version>1.7</version>
-			<scope>system</scope>
-			<systemPath>C:\Program Files\Java\jdk1.7.0_79\lib\tools.jar</systemPath>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-log4j-appender -->
 		<!-- <dependency> <groupId>org.apache.kafka</groupId> <artifactId>kafka-log4j-appender</artifactId> 
@@ -69,6 +69,10 @@
 				<exclusion>
 					<artifactId>slf4j-log4j12</artifactId>
 					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jdk.tools</artifactId>
+					<groupId>jdk.tools</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -221,6 +225,7 @@
 
 	<build>
 		<sourceDirectory>src/main/scala</sourceDirectory>
+		<testSourceDirectory>src/test/scala</testSourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

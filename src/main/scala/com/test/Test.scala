@@ -11,7 +11,18 @@ import scala.collection.JavaConversions._
 import scala.collection.immutable.Map
 import org.json.JSONObject
 import org.apache.hadoop.hbase.mapreduce.TableInputFormat
-object Test extends Utilities{
+import org.apache.spark.rdd.RDD
+import java.security.MessageDigest
+import org.apache.hadoop.hbase.util.MD5Hash
+import org.apache.hadoop.hbase.util.Bytes
+import java.util.Random
+import java.util.Calendar
+import java.text.SimpleDateFormat
+import java.util.Date
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+object Test extends Utilities {
+var a = new testcas
   def main(args: Array[String]): Unit = {
     //println(fun((1,1)))
     //val a=new HashMap[String,String]
@@ -20,12 +31,22 @@ object Test extends Utilities{
     //println(a)
     //t2(a)
     //println(a)
-   /* val url=new File("C:\\Users\\zhiziyun\\Desktop\\test-0.0.1-SNAPSHOT.jar").toURI().toURL()
+    /* val url=new File("C:\\Users\\zhiziyun\\Desktop\\test-0.0.1-SNAPSHOT.jar").toURI().toURL()
     val d=new URLClassLoader(Array(url), Thread.currentThread().getContextClassLoader())
    val a= d.loadClass("test.HelloWord")
    a.getMethod("printwoed",classOf[String]).invoke(a.newInstance(),"hello world")
    */
+    val sc = new SparkContext(new SparkConf().setMaster("local").setAppName("s"))
+    val rdd = sc.parallelize(Array(6, 8, 10, 11), 4)
     
+    //a.setaa("2")
+    rdd.map { x => println(a.a) }.count
+  }
+  class testcas() {
+    var a = "1"
+    def setaa(a: String) {
+      this.a = a
+    }
   }
   def t1(a: HashMap[String, String]) {
     a.clear()

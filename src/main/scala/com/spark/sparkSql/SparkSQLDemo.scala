@@ -16,25 +16,26 @@ def main(args: Array[String]): Unit = {
   var conf = new SparkConf()
                     .setMaster("local")
                     .setAppName("Spark Pi")
-System.setProperty("hadoop.home.dir", "E:\\eclipse\\hdplocal2.6.0")
+System.setProperty("hadoop.home.dir", "F:\\eclipse\\hdplocal2.6.0")
     var sc = new SparkContext(conf)
     val spark=new SQLContext(sc)
     import spark.implicits._
-    val data=sc.parallelize(Array[String]())
+    val data=sc.parallelize(Array("3","2","1"))
     spark.udf.register[Int,Int,Int]("udf1", udf1(_:Int,_:Int))
     spark.udf.register[String,String,String]("udf2", udf2(_:String,_:String))
-    data.map {x=>HBaseRecord(x,1) }
+data.map {x=>HBaseRecord(x,1) }
     .toDF
     .registerTempTable("test")
     
     val data2=sc.parallelize(Array[String]("a","b"))
     data2.toDF().rdd.map{x=>
-      
-    
     x}
     data2.map {x=>HBaseRecord(x,1) }
     .toDF
     .registerTempTable("test_tmp")
+    
+    data2.map {x=>HBaseRecord(x,1) }
+    .toDF
     //IF(a.col1 is NULL,b.col1,IF(b.col1 is null,a.col1,a.col1+b.col1)) 
     spark.sql(""" 
       select udf2(a.col0,b.col0) as col0,

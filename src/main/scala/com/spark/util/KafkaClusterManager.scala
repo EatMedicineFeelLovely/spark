@@ -44,9 +44,9 @@ object KafkaClusterManager {
       ok => ok)
     fromOffsets
   }
-  def getConsumerOffsetsByToday(conf: Configuration) = {
+  def getConsumerOffsetsByToday() = {
     var consumerOffsets = new HashMap[TopicAndPartition, Long]()
-    var todayOffsets = conf.get("zzy.kafka.todayoffset").split('|')
+    var todayOffsets = kafkaParams.get("zzy.kafka.todayoffset").get.split('|')
     for (offset <- todayOffsets) {
       val offsets = offset.split(",")
       consumerOffsets.put(new TopicAndPartition(offsets(0), offsets(1).toInt), offsets(2).toLong)
@@ -58,8 +58,9 @@ object KafkaClusterManager {
                          topics: Set[String]) = { //先获取这个groupid所消费的offset
     this.kafkaParams = kafkaParams
     this.topics = topics
+    groupId=kafkaParams("group.id")
     kc = new KafkaCluster(kafkaParams)
-    var consumerOffsets: Map[TopicAndPartition, Long] = getKafkafromOffsets(topics, kafkaParams)
+    var consumerOffsets: Map[TopicAndPartition, Long] = getConsumerOffsets(topics, groupId)
     KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder, (String, String)](
       ssc,
       kafkaParams,

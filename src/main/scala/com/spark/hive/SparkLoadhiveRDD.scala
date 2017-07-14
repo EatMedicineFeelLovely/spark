@@ -1,28 +1,29 @@
 package com.spark.hive
+import org.apache.hadoop.io.{Writable}
+import org.apache.hive.hcatalog.data.HCatRecord
+import org.apache.hive.hcatalog.data.schema.HCatFieldSchema
+import org.apache.hive.hcatalog.data.schema.HCatSchema
+import org.apache.hive.hcatalog.mapreduce
+import org.apache.hive.hcatalog.mapreduce.HCatInputFormat
 
-import org.apache.spark.SparkConf
+import org.apache.spark.SerializableWritable
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.hive.HiveContext
-import org.apache.spark.sql.DataFrame
-
-object HiveContextTest {
-  System.setProperty("hadoop.home.dir", "F:\\eclipse\\hdplocal2.6.0")
-	case class User2(name:Int,age:Int,sex:Int)
-  var hiveconf = new SparkConf().setAppName("sparkhivetest").setMaster("local")
-  setHiveConf
-  val  sc = new SparkContext(hiveconf)
-  val  sqlContext = new HiveContext(sc)
+import org.apache.spark.rdd.RDD
+import scala.collection.JavaConversions.asScalaBuffer
+object SparkLoadhiveRDD {
   def main(args: Array[String]): Unit = {
-    sqlContext.sql("use test")
-    val df=sqlContext.sql("select * from test.mb_conv_test")
-    df.rdd.collect().foreach { x=>println(">>>>>>>>>>>>>>>>> "+x) }
+    setHiveConf
+    val sparkContext=new SparkContext()
+ val f = classOf[HCatInputFormat]
+    val k = classOf[org.apache.spark.SerializableWritable[org.apache.hadoop.io.Writable]]
+    val v = classOf[org.apache.hive.hcatalog.data.HCatRecord]
+    HCatInputFormat.setInput(sparkContext.hadoopConfiguration, "test", "mb_conv_test")
+   /*val d= sparkContext.newAPIHadoopRDD(
+       sparkContext.hadoopConfiguration, f, k, v)*/
     
-   /* var rdd=sc.parallelize(Array(Map("name"->1,"age"->2,"sex"->3))).map{x=>User2(name=x("name"),age=x("age"),sex=x("sex"))}
-    sqlContext.createDataFrame(rdd).registerTempTable("user2")
-    sqlContext.sql("show tables").show
-    sc.stop()*/
+    
   }
-   def setHiveConf() {
+  def setHiveConf() {
     //加一下的信息，就可以不用使用hive-site.xml和hdfs-site.xml了
     //信息在/etc/hive/conf/hive-site.xml里面
      //加配置文件是最保险的。有时候加下面的也不成功

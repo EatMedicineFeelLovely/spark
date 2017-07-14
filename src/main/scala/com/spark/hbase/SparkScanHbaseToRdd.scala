@@ -24,6 +24,10 @@ import org.apache.hadoop.hbase.util.Base64
 import java.util.HashMap
 import org.apache.hadoop.hbase.util.Bytes
 import scala.collection.JavaConversions._
+import org.apache.hadoop.hbase.mapreduce.TableOutputFormat
+import org.apache.hadoop.hbase.client.Table
+import org.apache.hadoop.hbase.client.Get
+import scala.collection.mutable.ArrayBuffer
 object SparkScanHbaseToRdd {
   var sc: SparkContext = null
   var conf: Configuration = null
@@ -82,4 +86,19 @@ object SparkScanHbaseToRdd {
       classOf[ImmutableBytesWritable],
       classOf[Result]).map(f)
   }
+  def getRowRDD(hbaseTableName: String, dtypes: Array[(String, String)], rowKeyArr: RDD[String], rowArr: Array[Any]) = {
+      rowKeyArr.mapPartitions{ partition => 
+        val table :Table=null
+        val toKafka=new ArrayBuffer[String]()
+        val re=partition.map { rowkey => (rowkey,table.get(new Get(Bytes.toBytes(rowkey)))) }
+                 .map{ case(rowkey,result) =>
+                   if(result == null){
+                   toKafka.+=(rowkey)
+                   null
+                       }else ""
+                     }.filter { _ !=null }
+          //把    toKafka 发送到kafka       
+          re
+          }
+    }
 }

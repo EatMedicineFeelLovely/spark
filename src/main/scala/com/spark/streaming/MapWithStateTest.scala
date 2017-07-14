@@ -20,7 +20,7 @@ object MapWithStateTest {
   def main(args: Array[String]): Unit = {
     init
     val ssc = new StreamingContext(sc, Seconds(5))
-    // val initialRDD = ssc.sparkContext.parallelize(List(("a", 100), ("b", 10)))
+     val initialRDD = ssc.sparkContext.parallelize(List(("a", 100), ("b", 10)))
     ssc.checkpoint("/user/linmingqiang/checkpoint")
     val topics = Set("test")
     var kafkaParams = Map[String, String](

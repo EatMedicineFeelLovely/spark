@@ -24,7 +24,7 @@ object SparkListToDataFrame {
     def main(args: Array[String]): Unit = {
       //secondRDDToFrame()
       //show("select * from Detail")
-      AddressRDDToFrame
+      secondRDDToFrame
     }
   def UserRDDToDataFrame(data:ArrayList[HashMap[String,String]],tableName:String){
     //这是java的写法
@@ -60,18 +60,20 @@ object SparkListToDataFrame {
     map.put("phone", "10312123")
     arraybuffer+=map
     var liens=sc.parallelize(arraybuffer)
-              .map{p=>val r=Row(p.get("name"),p.get("phone"),p.get("age"));
-              Row(Array(1,2))
+              .map{p=>
+              val r=Row(p.get("name"),p.get("phone").toInt,p.get("age").toDouble);
               r
-  }
+             }
     var schemaString = Array("name","phone","age")
     val types=Array(StringType,IntegerType,DoubleType)
     var columns=schemaString.zip(types).map{case(name,tp)=>
-      StructField(name, "", true)
+      StructField(name, tp, true)
     }
     val schema = StructType(columns)
     var schemaData=sqlContext.createDataFrame(liens, schema)
     schemaData.registerTempTable("Detail")
+    
+    sqlContext.sql("select * from Detail").show
     
     
   }

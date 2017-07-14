@@ -19,6 +19,7 @@ import org.apache.spark.rdd.RDD
 import scala.reflect.ClassTag
 import org.apache.hive.hcatalog.mapreduce.HCatRecordReader
 import org.apache.hadoop.mapreduce.JobContext
+import org.apache.hive.hcatalog.mapreduce.HCatInputFormat
 
 object SparkRddToHive {
   var sc: SparkContext = null

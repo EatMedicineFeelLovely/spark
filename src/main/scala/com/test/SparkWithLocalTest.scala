@@ -14,6 +14,13 @@ import kafka.serializer.StringDecoder
 import kafka.serializer.StringDecoder
 import org.apache.spark.streaming.kafka.Broker
 import kafka.common.TopicAndPartition
+import org.apache.spark.Partitioner
+import org.apache.spark.RangePartitioner
+import org.apache.spark.RangePartitioner
+import org.apache.spark.HashPartitioner
+import org.apache.spark.rdd.RDD
+import java.io.Serializable
+import org.apache.spark.storage.StorageLevel
 object SparkWithLocalTest {
  var sc: SparkContext = null
  val zookeeper=""
@@ -24,11 +31,56 @@ object SparkWithLocalTest {
       .setMaster("local")
       .setAppName("Test")
     sc = new SparkContext(sparkConf) 
-   
-   
-   
- }
+   val data = Array(1,2,3,4)
+ val a =sc.parallelize(Array(1,2,3))
+ val bro=sc.broadcast(a)
  
+ sc.parallelize(Array(1,2,3))
+ .foreach { x => 
+   bro.value.collect().foreach { println }
+   println(x)
+   }
+ }
+ /////////////////////
+trait TraitTest{
+  
+  def fun2(x:(Int,Int))={
+    x
+  }
+   def fun5(x:(Int,Int))={
+    x
+  }
+    def fun3(rdd:RDD[(Int,Int)])={
+    rdd.map(fun1)//使用的这个fun1不是object的。而是当前这个trait的。尽管object继承了
+  }
+}
+//////////////////
+//报序列化
+/*trait TraitTest2 {
+  def fun5(x:(Int,Int))={
+    x
+  }
+}
+class classTest(rdd:RDD[(Int,Int)]) extends TraitTest2{
+  def fun4()={
+    rdd.map(fun5)
+  }
+}*/
+/////////////////////
+//不会报序列化，因为fun5在object里面
+class classTest(rdd:RDD[(Int,Int)]){
+  def fun4()={
+    rdd.map(fun5)
+  }
+}
+////////////////////
+ def f=(a:Iterator[(Int,Int)],b:Iterator[String])=>{
+   val al=a.toList
+   val bl=b.toList
+   if(al.size==bl.size){
+     al.zip(bl).toIterator
+   }else al.zipAll(bl, (1,1), "null").toIterator
+ }
  def getKafkaRDD(){
    var kafkaParams = Map[String, String]("metadata.broker.list" -> "kafka1:9092,kafka2:9092,kafka3:9092",
       "serializer.class" -> "kafka.serializer.StringEncoder",

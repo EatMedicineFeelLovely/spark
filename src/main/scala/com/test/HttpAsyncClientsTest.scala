@@ -1,4 +1,4 @@
-package com.test
+/*package com.test
 
 import org.json.JSONObject
 import org.apache.http.impl.client.DefaultHttpClient
@@ -22,9 +22,9 @@ import org.apache.http.impl.nio.conn.ManagedNHttpClientConnectionFactory
 import org.apache.http.params.HttpParams
 import org.apache.http.params.BasicHttpParams
 
-/**
+*//**
  * http异步发消息
- */
+ *//*
 object HttpAsyncClientsTest {
   def main(args: Array[String]): Unit = {
    //testHttpClient
@@ -173,10 +173,10 @@ class MyResponseConsumer extends AsyncCharConsumer[Boolean] {
   
         @Override  
        def onCharReceived(buf: CharBuffer , ioctrl: IOControl ){  
-           /* System.out.println(getTimes() + "onCharReceived");  
+            System.out.println(getTimes() + "onCharReceived");  
             while (buf.hasRemaining()) {  
                 System.out.print(buf.get());  
-            } */ 
+            }  
         }  
         
         @Override
@@ -190,7 +190,7 @@ class MyResponseConsumer extends AsyncCharConsumer[Boolean] {
         }    
   
 }  
-/*def doAsyncGet(String url) throws IOException{
+def doAsyncGet(String url) throws IOException{
 RequestConfig defaultRequestConfig = RequestConfig.custom()
 				  .setSocketTimeout(5000)
 				  .setConnectTimeout(5000)
@@ -237,8 +237,8 @@ RequestConfig defaultRequestConfig = RequestConfig.custom()
 			log.error("http async error:"+url,e);
 		}
 	}
-*/
-/*{
+
+{
 					//无论完成还是失败都调用countDown()
 					@Override
 					def completed(response:HttpResponse) {
