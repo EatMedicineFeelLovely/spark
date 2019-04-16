@@ -22,28 +22,28 @@ object HiveContextTest {
     sqlContext.sql("show tables").show
     sc.stop()*/
   }
-   def setHiveConf() {
+  def setHiveConf() {
     //加一下的信息，就可以不用使用hive-site.xml和hdfs-site.xml了
     //信息在/etc/hive/conf/hive-site.xml里面
      //加配置文件是最保险的。有时候加下面的也不成功
     System.setProperty("hive.metastore.uris", "thrift://mongodb3:9083")
     System.setProperty("hive.metastore.warehouse.dir", "/user/hive/warehouse")
-    System.setProperty("hive.zookeeper.quorum", "mongodb3,solr2.zhiziyun.com,solr1.zhiziyun.com")
+    System.setProperty("hive.zookeeper.quorum", "mongodb3,solr2,solr1")
     System.setProperty("hive.zookeeper.client.port", "2181")
     
     System.setProperty("dfs.nameservices", "nameservice-zzy")
     System.setProperty("dfs.client.failover.proxy.provider.nameservice-zzy", "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider")
     System.setProperty("dfs.ha.automatic-failover.enabled.nameservice-zzy", "true")
-    System.setProperty("ha.zookeeper.quorum", "mongodb3:2181,solr1.zhiziyun.com:2181,solr2.zhiziyun.com:2181")
+    System.setProperty("ha.zookeeper.quorum", "mongodb3:2181,solr1:2181,solr2:2181")
     System.setProperty("dfs.ha.namenodes.nameservice-zzy", "namenode47,namenode237")
     System.setProperty("dfs.namenode.rpc-address.nameservice-zzy.namenode47", "mongodb3:8020")
     System.setProperty("dfs.namenode.servicerpc-address.nameservice-zzy.namenode47", "mongodb3:8022")
     System.setProperty("dfs.namenode.http-address.nameservice-zzy.namenode47", "mongodb3:50070")
     System.setProperty("dfs.namenode.https-address.nameservice-zzy.namenode47", "mongodb3:50470")
-    System.setProperty("dfs.namenode.rpc-address.nameservice-zzy.namenode237", "solr2.zhiziyun.com:8020")
-    System.setProperty("dfs.namenode.servicerpc-address.nameservice-zzy.namenode237", "solr2.zhiziyun.com:8022")
-    System.setProperty("dfs.namenode.http-address.nameservice-zzy.namenode237", "solr2.zhiziyun.com:50070")
-    System.setProperty("dfs.namenode.https-address.nameservice-zzy.namenode237", "solr2.zhiziyun.com:50470")
+    System.setProperty("dfs.namenode.rpc-address.nameservice-zzy.namenode237", "solr2:8020")
+    System.setProperty("dfs.namenode.servicerpc-address.nameservice-zzy.namenode237", "solr2:8022")
+    System.setProperty("dfs.namenode.http-address.nameservice-zzy.namenode237", "solr2:50070")
+    System.setProperty("dfs.namenode.https-address.nameservice-zzy.namenode237", "solr2:50470")
     System.setProperty("dfs.namenode.http-address.nameservice-zzy.namenode47", "mongodb3:50070")
     System.setProperty("dfs.client.use.datanode.hostname", "false")
     
