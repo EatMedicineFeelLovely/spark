@@ -11,6 +11,7 @@ object TestSparkSql {
   def main(args: Array[String]): Unit = {
 
     val conf = getParamConf(args)
+    println(conf)
     val spark = SparkSession
       .builder()
       .appName("test")
@@ -20,7 +21,7 @@ object TestSparkSql {
     registerUDF(spark) //注册所需的udf
     spark.sparkContext.setLogLevel("ERROR")
     val df = spark.sparkContext
-      .textFile("/user/dmp/test/100w/*")
+      .textFile(conf.path)
       .map(x => kv(x.toInt / 5, x.toInt))
       .toDF()
     df.cache() //df 的 cache 和 tablecache 是一样的，毕竟testTable是从df来得额

@@ -12,7 +12,7 @@ package object learn {
   def getParamConf(args: Array[String]) = {
     val parses = new OptionParser[Config](programName = "test") {
       head("test")
-      opt[String]("parh")
+      opt[String]("path")
         .abbr("p")
         .text("文件路径")
         .action((x, c) => c.copy(path = x))
