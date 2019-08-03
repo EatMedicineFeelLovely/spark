@@ -1,0 +1,6 @@
+# Structure Streaming 2.4.0
+demo：
+    session计算：统计各sessionid 的停留时间，访问深度
+        watermark的理解和使用
+        agg统计
+        DateSet的转换
