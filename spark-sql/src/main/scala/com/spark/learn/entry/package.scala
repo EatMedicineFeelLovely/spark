@@ -6,7 +6,7 @@ import scopt.OptionParser
 package object entry {
 
   /**
-    *
+    *脚本参数
     * @param args
     */
   def getParamConf(args: Array[String]) = {

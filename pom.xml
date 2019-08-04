@@ -10,6 +10,7 @@
     <version>2.1.0</version>
     <modules>
         <module>spark-sql</module>
+        <module>spark-core</module>
     </modules>
     <properties>
         <maven.compiler.source>1.6</maven.compiler.source>
@@ -21,6 +22,8 @@
     </properties>
     <dependencyManagement>
         <dependencies>
+
+
             <!-- 解决 java.lang.ArrayIndexOutOfBoundsException: 10582 问题-->
             <dependency>
                 <groupId>com.thoughtworks.paranamer</groupId>
