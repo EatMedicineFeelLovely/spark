@@ -1,4 +1,4 @@
-package com.spark.learn.cassclass
+package com.spark.learn.bean
 
 import scala.reflect.runtime.universe._
 

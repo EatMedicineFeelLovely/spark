@@ -1,11 +1,9 @@
-package com.spark.learn
+package com.spark.learn.entry
 
 import org.apache.spark.sql.SparkSession
-
-import com.spark.learn.cassclass.kv
-import com.spark.learn.udf.SparkSqlMaxUDFA
+import com.spark.learn.bean.kv
 import org.apache.spark.sql.functions._
-import com.spark.learn.udf._
+import com.spark.learn.udf.{SparkSqlMaxUDFA, _}
 
 object TestSparkSql {
   def main(args: Array[String]): Unit = {

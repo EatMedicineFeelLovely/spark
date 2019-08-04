@@ -1,9 +1,9 @@
-package com.spark
+package com.spark.learn
 
-import com.spark.learn.cassclass.Config
+import com.spark.learn.bean.Config
 import scopt.OptionParser
 
-package object learn {
+package object entry {
 
   /**
     *

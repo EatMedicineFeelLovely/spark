@@ -1,6 +1,6 @@
 package com.spark.learn
 
-package object cassclass {
+package object bean {
 
   /**
     *
@@ -12,7 +12,6 @@ package object cassclass {
   /**
     *命令行配置信息， 采用 --path   --day  的方式来传参
     * @param path
-    * @param topn
     * @param day
     */
   case class Config(path: String = "defaultPath",
