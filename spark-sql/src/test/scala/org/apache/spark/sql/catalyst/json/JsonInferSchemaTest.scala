@@ -95,7 +95,6 @@ object JsonInferSchemaTest {
     var rootType: DataType = StructType(Nil)
     val foldPartition = (iter: Iterator[DataType]) =>
       iter.fold(StructType(Nil))(typeMerger)
-    println(">>>>>>> mergeResult <<<<")
     val mergeResult = (index: Int, taskResult: DataType) => {
       rootType = SQLConf.withExistingConf(existingConf) {
         typeMerger(rootType, taskResult)
@@ -286,11 +285,9 @@ object JsonInferSchemaTest {
     // Since we support array of json objects at the top level,
     // we need to check the element type and find the root level data type.
     case (ArrayType(ty1, _), ty2) =>
-      println("(ArrayType(ty1, _), ty2)", ty1, ty2)
       //compatibleRootType(columnNameOfCorruptRecords, parseMode)(ty1, ty2)
       ArrayType(ty1)
     case (ty1, ArrayType(ty2, _)) =>
-      println("(ty1, ArrayType(ty2, _))", ty1, ty2)
       //compatibleRootType(columnNameOfCorruptRecords, parseMode)(ty1, ty2)
       ArrayType(ty1)
     // Discard null/empty documents
@@ -302,7 +299,7 @@ object JsonInferSchemaTest {
       withCorruptField(struct, o, columnNameOfCorruptRecords, parseMode)
     // If we get anything else, we call compatibleType.
     // Usually, when we reach here, ty1 and ty2 are two StructTypes.
-    case (ty1, ty2) => println("(ty1, ty2)", ty1, ty2); compatibleType(ty1, ty2)
+    case (ty1, ty2) => compatibleType(ty1, ty2)
   }
 
   private[this] val emptyStructFieldArray = Array.empty[StructField]
@@ -330,7 +327,6 @@ object JsonInferSchemaTest {
           }
 
         case (StructType(fields1), StructType(fields2)) =>
-          println("(StructType(fields1), StructType(fields2)) ", fields1.length)
           // Both fields1 and fields2 should be sorted by name, since inferField performs sorting.
           // Therefore, we can take advantage of the fact that we're merging sorted lists and skip
           // building a hash map or performing additional sorting.
@@ -342,18 +338,17 @@ object JsonInferSchemaTest {
             s"${StructType.simpleString}'s fields were not sorted: ${fields2.toSeq}")
 
           val newFields = new java.util.ArrayList[StructField]()
-
           var f1Idx = 0
           var f2Idx = 0
-          println(">>>>>>>>>> ",f1Idx,fields1.length,f2Idx,fields2.length)
           while (f1Idx < fields1.length && f2Idx < fields2.length) {
             val f1Name = fields1(f1Idx).name
             val f2Name = fields2(f2Idx).name
             val comp = f1Name.compareTo(f2Name)
-            println(">>>>>>>>", comp, f1Name, f2Name)
             if (comp == 0) {
+              println(">>> compatibleType : ",fields1(f1Idx).dataType,fields2(f2Idx).dataType)
               val dataType =
                 compatibleType(fields1(f1Idx).dataType, fields2(f2Idx).dataType)
+              println(">>> compatibleType dataType : ",dataType)
               newFields.add(StructField(f1Name, dataType, nullable = true))
               f1Idx += 1
               f2Idx += 1
@@ -388,7 +383,7 @@ object JsonInferSchemaTest {
           compatibleType(DecimalType.forType(t1), t2)
         case (t1: DecimalType, t2: IntegralType) =>
           compatibleType(t1, DecimalType.forType(t2))
-
+        case (ArrayType(elementType1, containsNull1), StringType) => ArrayType(StringType,containsNull1)
         // strings and every string is a Json object.
         case (_, _) => StringType
       }
