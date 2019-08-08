@@ -65,8 +65,7 @@ object JsonInferSchemaTest {
           try {
             Utils.tryWithResource(createParser(factory, row)) { parser =>
               parser.nextToken()
-              val r = inferField(parser, configOptions)
-              Some(r)
+              Some(inferField(parser, configOptions))
             }
           } catch {
             case e @ (_: RuntimeException | _: JsonProcessingException) =>
@@ -285,11 +284,9 @@ object JsonInferSchemaTest {
     // Since we support array of json objects at the top level,
     // we need to check the element type and find the root level data type.
     case (ArrayType(ty1, _), ty2) =>
-      //compatibleRootType(columnNameOfCorruptRecords, parseMode)(ty1, ty2)
-      ArrayType(ty1)
+      compatibleRootType(columnNameOfCorruptRecords, parseMode)(ty1, ty2)
     case (ty1, ArrayType(ty2, _)) =>
-      //compatibleRootType(columnNameOfCorruptRecords, parseMode)(ty1, ty2)
-      ArrayType(ty1)
+      compatibleRootType(columnNameOfCorruptRecords, parseMode)(ty1, ty2)
     // Discard null/empty documents
     case (struct: StructType, NullType) => struct
     case (NullType, struct: StructType) => struct
@@ -372,7 +369,6 @@ object JsonInferSchemaTest {
 
         case (ArrayType(elementType1, containsNull1),
               ArrayType(elementType2, containsNull2)) =>
-          println(">>> >>>>>")
           ArrayType(compatibleType(elementType1, elementType2),
                     containsNull1 || containsNull2)
 
@@ -383,7 +379,8 @@ object JsonInferSchemaTest {
           compatibleType(DecimalType.forType(t1), t2)
         case (t1: DecimalType, t2: IntegralType) =>
           compatibleType(t1, DecimalType.forType(t2))
-        case (ArrayType(elementType1, containsNull1), StringType) => ArrayType(StringType,containsNull1)
+       // case (ArrayType(elementType1, containsNull1), StringType) => ArrayType(StringType,containsNull1)
+        case (t1: StringType,t2: DataType) => t2
         // strings and every string is a Json object.
         case (_, _) => StringType
       }
