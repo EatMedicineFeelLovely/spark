@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>sparkpj-model</artifactId>
+        <groupId>com.lmq.spark</groupId>
+        <version>v1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>sparkpj-resources</artifactId>
+    <build>
+        <filters>
+            <filter>
+                ${project.basedir}/env/${env}_env.properties
+            </filter>
+        </filters>
+        <plugins>
+            <!--拷贝文件插件-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>UTF-8</encoding>
+                            <outputDirectory>${project.build.directory}/${project.artifactId}/conf</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>*</include>
+                                    </includes>
+                                    <excludes>
+                                        <exclude>*.iml</exclude>
+                                        <exclude>build.xml</exclude>
+                                        <exclude>pom.xml</exclude>
+                                    </excludes>
+                                </resource>
+                                <resource>
+                                    <directory>log4j</directory>
+                                    <!--开启filtering功能  -->
+                                    <filtering>true</filtering>
+                                </resource>
+                                <resource>
+                                    <directory>conf</directory>
+                                    <!--开启filtering功能  -->
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

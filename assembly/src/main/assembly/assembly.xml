@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<assembly>
+  <!-- 这个id 是输出目录后缀 -->
+  <id>dist</id>
+  <formats>
+    <format>dir</format>
+    <!--<format>tar.gz</format>-->
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+
+  <fileSets>
+    <!-- 打包 readme -->
+    <fileSet>
+      <directory>${project.parent.basedir}/</directory>
+      <outputDirectory>/</outputDirectory>
+      <includes>
+        <include>*.md</include>
+      </includes>
+    </fileSet>
+    <!-- 打包 文档 -->
+    <fileSet>
+      <directory>${project.parent.basedir}/docs</directory>
+      <outputDirectory>/docs</outputDirectory>
+      <includes>
+        <include>**</include>
+      </includes>
+      <excludes>
+        <exclude>**/tmp/**</exclude>
+      </excludes>
+    </fileSet>
+
+    <!-- 打包 第三方lib -->
+    <fileSet>
+      <directory>${project.parent.basedir}/lib</directory>
+      <outputDirectory>/lib</outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+
+    <!-- 打包 core 的 jar -->
+    <fileSet>
+      <directory>${project.parent.basedir}/sparkpj-core/target/</directory>
+      <outputDirectory>/lib</outputDirectory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
+      <directory>${project.parent.basedir}/target/lib</directory>
+      <outputDirectory>/lib</outputDirectory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+    <!-- 打包 commons 的 jar -->
+    <fileSet>
+      <directory>${project.parent.basedir}/sparkpj-commons/target/</directory>
+      <outputDirectory>/lib</outputDirectory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+
+    <!-- 打包 util 的 jar -->
+    <fileSet>
+      <directory>${project.parent.basedir}/sparkpj-utils/target/</directory>
+      <outputDirectory>/lib</outputDirectory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+
+    <!-- 打包 sbin下面的脚本 -->
+    <fileSet>
+      <directory>${project.parent.basedir}/sbin</directory>
+      <outputDirectory>/sbin</outputDirectory>
+      <includes>
+        <include>**/*.sh</include>
+      </includes>
+      <fileMode>0755</fileMode>
+    </fileSet>
+    <fileSet>
+      <directory>${project.parent.basedir}/sbin/test</directory>
+      <outputDirectory>/sbin/test</outputDirectory>
+      <includes>
+        <include>**/*.sh</include>
+      </includes>
+      <fileMode>0755</fileMode>
+    </fileSet>
+
+
+    <!-- 打包 conf 的 配置文件 **/*-->
+    <fileSet>
+      <directory>${project.parent.basedir}/resources/target/sparkpj-resources/conf</directory>
+      <outputDirectory>/resources</outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+
+    </fileSet>
+
+    <fileSet>
+      <directory>${project.parent.basedir}/resources/file</directory>
+      <outputDirectory>/resources/file</outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+</assembly>
