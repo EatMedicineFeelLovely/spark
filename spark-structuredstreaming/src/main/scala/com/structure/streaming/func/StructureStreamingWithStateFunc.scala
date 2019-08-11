@@ -16,7 +16,7 @@ object StructureStreamingWithStateFunc {
   def sessionAggMapWithState(sessionId: String,
                              events: Iterator[SessionLog],
                              state: GroupState[SessionStateInfo]) = {
-    //如果超时了
+    //如果超时了,状态的时间小于watermark的时间
     if (state.hasTimedOut) {
       val finalUpdate =
         SessionResult(
@@ -43,7 +43,7 @@ object StructureStreamingWithStateFunc {
       }
       state.update(updatedSession)
 
-      val wartermarkT = state.getCurrentWatermarkMs() //这个watermark是所有数据最大的eventime -delay。
+      //val wartermarkT = state.getCurrentWatermarkMs() //这个watermark是所有数据最大的eventime -delay。
       //这个只能基于GroupStateTimeout.EventTimeTimeout才生效
       //只有当 当前sessionid 的 endTimestampMs < watermark的时候，这条数据才会失效
       state.setTimeoutTimestamp(updatedSession.endTime)
