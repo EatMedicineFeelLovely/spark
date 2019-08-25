@@ -36,21 +36,24 @@ object StructureStreamingKafkaTest {
       .option("group.id", "test")
       .option("kafka.bootstrap.servers", kafkabroker)
       .option("subscribe", topics) // 可以多个topic，用逗号分开
-      .option("startingOffsets", "latest") //
+      .option("startingOffsets", "earliest") //
       .option("maxOffsetsPerTrigger", 150) //每个批次最多拉多少条数据，如果6个分区，这里设置15，那每个分区最多取2条= 12 < 15
-      // .option("startingOffsets", """{"topic1":{"0":23,"1":-2},"topic2":{"0":-2}}""")//指定起点
+      // .option("startingOffsets", """{"advertising_log3":{"0":0,"1":12966749,"2":12968990,"3":12972125,"4":12964688,"5":12897672,"6":12966778,"7":12968714,"8":12972059,"9":12964635,"10":12897717,"11":12966996,"12":12968736,"13":12971947,"14":12964676,"15":12897765}}""")
       .load()
       //.repartition(2)
       .selectExpr("CAST(value AS STRING)")
       .as[String]
 
     //mapGroupsWithState(spark, df.mapPartitions(TransFormatFunc.transToSessionLog))
-    aggregate(spark, df.mapPartitions(TransFormatFunc.transToAdlog))
+    //aggregate(spark, df.mapPartitions(TransFormatFunc.transToAdlog))
     //waterMarkWindow(spark, df.mapPartitions(TransFormatFunc.transToAdlog))
     //foreachSink(df.mapPartitions(TransFormatFunc.transToAdlog))
-    //foreachBatchSink(spark, df)
+    foreachBatchSink(spark, df)
     spark.streams.addListener(new StreamingQueryListenerDemo)
     spark.streams.awaitAnyTermination()
+    println("error")
+    spark.streams.resetTerminated()
+
   }
 
   /**
