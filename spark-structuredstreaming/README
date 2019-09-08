@@ -12,4 +12,5 @@ demo：
 append：
 第一个窗口不会直接输出，等延迟时间到了就会整个窗口的数据都输出 （每个窗口数据只输出一次）
 
-
+- 3： 关于spark 状态的超时清理的问题
+    https://blog.csdn.net/bluishglc/article/details/80844327
