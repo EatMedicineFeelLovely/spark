@@ -1,6 +1,6 @@
 package com.spark.learn
 
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{Row, SparkSession}
 import com.spark.learn.cassclass.kv
 import com.spark.learn.udf.SparkSqlMaxUDFA
 import org.apache.spark.broadcast.Broadcast
@@ -13,8 +13,13 @@ object TestSparkSql {
       .master("local")
       .getOrCreate()
     import spark.implicits._
+    spark.sparkContext
+      .parallelize(1 to 10)
+      .toDF("b")
+      .foreachPartition({ x: Iterator[Row] =>
 
-    leftJoinTest(spark)
+      })
+    // leftJoinTest(spark)
     //arrayColumns(spark)
     // udfTest(spark)
   }
@@ -28,10 +33,22 @@ object TestSparkSql {
     spark.sparkContext
       .parallelize(1 to 10)
       .toDF("b")
-      .join(spark.sparkContext.parallelize(Array((1, 2))).toDF("a", "c"),
-            expr("b = c"),
-            "leftouter")
-      .filter($"c".isNull)
+      .createOrReplaceTempView("left1")
+
+    spark.sparkContext
+      .parallelize(Array((1, 2)))
+      .toDF("a", "c")
+      .createOrReplaceTempView("left2")
+
+    spark
+      .sql(s"""select *,case when l2.a is not null then 'a'
+           |when l2.c is not null then 'c'
+           |else 'ok' end as result
+           |from left1 l1
+           |full join
+           |left2 l2
+           |on l1.b=l2.c""".stripMargin)
+      // .filter($"c".isNull)
       .show
 
   }
