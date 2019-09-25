@@ -107,6 +107,7 @@ object StructureStreamingKafkaTest {
     //每个窗口内的数据以word来分组，并对word做count(*)统计= select word,count(1) from window group by word
     //watermark的作用其实就是来决定 某个windows 的key要不要被清除，
     //watermark = max(eventime) - ${delay min} ,如果window[max time] < watermark ,那这个窗口就扔了，不会再更新了
+    // stream上事不支持多个groupby或者聚合操作的，只能有一个
     df.withWatermark("time", "10 minutes")
       //这里的window也是个字段，数据为 ：[2019-07-19 15:03:00.0,2019-07-19 15:04:00.0]
       .groupBy(window($"time", "1 minutes", "1 minutes"), $"site")
