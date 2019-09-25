@@ -1,8 +1,9 @@
 package com.spark.learn.udf
 
 import com.spark.code.util.{ClassCreateUtils, ScalaGenerateFuns}
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.sql.catalyst.FunctionIdentifier
+import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.catalyst.expressions.{Expression, ScalaUDF}
 
 import scala.util.Try
@@ -30,10 +31,21 @@ object ThermalloadingUDF extends Serializable {
 
     spark.sessionState.functionRegistry
       .registerFunction(new FunctionIdentifier("myUDFtoUps"), builder)
+    spark.udf.register("", () => {})
+//    spark.sparkContext
+//      .parallelize(1 to 100)
+//      .toDF("a")
+//      .createOrReplaceTempView("test")
+//    spark.sql("select myUDFtoUps(a) as A from test" ) .show
+//
+
     spark.sparkContext
-      .parallelize(1 to 100)
+      .parallelize(Array("a", "b", "c"))
       .toDF("a")
-      .createOrReplaceTempView("test")
-spark.sql("select myUDFtoUps(a) as A from test" ) .show
+      // .mapPartitions(f _)(RowEncoder[])
+  }
+
+  def f(itor: Iterator[Row]) = {
+    itor.map(r => { Row(r.getString(0).toUpperCase) })
   }
 }

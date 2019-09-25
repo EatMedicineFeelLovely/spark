@@ -50,8 +50,8 @@ object ClassCreateUtils {
   }
   def wrapClass(function: String): (String, String) = {
     val className =
-      s"dynamic_class_${UUID.randomUUID().toString.replaceAll("-", "")}"
-    val classBody =
+       s"class_${UUID.randomUUID().toString.replaceAll("-", "")}"
+    val classBody = //function
       s"""
          |class $className{
          |  $function
@@ -71,8 +71,16 @@ object ClassCreateUtils {
   }
 
   def main(args: Array[String]): Unit = {
-    val classFunc = ClassCreateUtils(s"def myUDFtoUps(str:Int):Int = str*100")
-    val myMethod = classFunc.methods("myUDFtoUps")
+    val c =
+      s"""class hello(){
+         | var a:String = ""
+         |}
+         |""".stripMargin
+    val f =
+      s"""import org.apache.spark.sql.Row
+         |def myUDFtoUps(str:Int):Row = Row(str)""".stripMargin
+    val classFunc = ClassCreateUtils(f)
+   val myMethod = classFunc.methods("myUDFtoUps")
     println(myMethod.invoke(classFunc.instance, new Integer(1))) // method1
     // println(classFunc.defaultMethodinvoke(new Integer(1))) // 默认地func
   }
