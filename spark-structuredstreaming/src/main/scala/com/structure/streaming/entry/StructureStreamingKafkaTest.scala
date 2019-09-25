@@ -20,7 +20,9 @@ import org.apache.spark.streaming.Seconds
 import org.apache.spark.streaming.kafka010.HasOffsetRanges
 object StructureStreamingKafkaTest {
   //PropertyConfigurator.configure("log4j.properties")
-
+// 由于Flink与Structured Streaming的架构的不同，task是常驻运行的，flink不需要状态算子
+  // 同样的分区id 会发往同样的task。不像spakr每次都释放，然后再重新申请task，每次分区都会重新在不同的executor上执行
+  // 这导致了spark不能用rocksdb
   def main(args: Array[String]): Unit = {
     val spark =
       SparkSession
