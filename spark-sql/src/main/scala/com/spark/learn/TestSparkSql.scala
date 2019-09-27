@@ -16,9 +16,8 @@ object TestSparkSql {
     spark.sparkContext
       .parallelize(1 to 10)
       .toDF("b")
-      .foreachPartition({ x: Iterator[Row] =>
-
-      })
+      .withColumn("c", lit("hello"))
+      .show
     // leftJoinTest(spark)
     //arrayColumns(spark)
     // udfTest(spark)
