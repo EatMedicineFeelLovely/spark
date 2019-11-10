@@ -20,6 +20,12 @@
 
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.scala-lang/scala-compiler -->
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-compiler</artifactId>
+            <version>2.12.5</version>
+        </dependency>
 
         <dependency>
             <groupId>com.thoughtworks.paranamer</groupId>

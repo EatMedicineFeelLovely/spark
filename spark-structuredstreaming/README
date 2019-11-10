@@ -4,3 +4,13 @@ demo：
         watermark的理解和使用
         agg统计
         DateSet的转换
+- 1: 由于Flink与Structured Streaming的架构的不同，task是常驻运行的，flink不需要状态算子
+同样的分区id 会发往同样的task。不像spakr每次都释放，然后再重新申请task，每次分区都会重新在不同的executor上执行
+这导致了spark不能用rocksdb
+- 2: update （推荐用这个）：
+第一个窗口会直接输出数据，但是在第三个窗口的时候也会输出一条 有更新的数据（每个窗口输出多次）
+append：
+第一个窗口不会直接输出，等延迟时间到了就会整个窗口的数据都输出 （每个窗口数据只输出一次）
+
+- 3： 关于spark 状态的超时清理的问题
+    https://blog.csdn.net/bluishglc/article/details/80844327
