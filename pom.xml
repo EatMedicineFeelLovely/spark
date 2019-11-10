@@ -12,6 +12,7 @@
         <module>spark-structuredstreaming</module>
         <module>spark-sql</module>
         <module>spark-core</module>
+        <module>spark-udf</module>
     </modules>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

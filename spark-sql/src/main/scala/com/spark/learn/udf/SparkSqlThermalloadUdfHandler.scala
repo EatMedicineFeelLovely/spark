@@ -13,13 +13,11 @@ object SparkSqlThermalloadUdfHandler {
     * @return
     */
   def apply(funCode: String): (String, AnyRef, Array[DataType], DataType) = {
-
     val funcInfo = ClassFuncReflectUtils.createClass(funCode)
     val (argumentTypes, returnType) = getFunctionReturnType(
       funcInfo.methods(""))
     val funcIns =
       generateFunctionx(funCode, argumentTypes.length)
-
     ("", funcIns, argumentTypes, returnType)
   }
 

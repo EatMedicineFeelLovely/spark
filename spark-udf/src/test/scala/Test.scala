@@ -1,9 +1,9 @@
-import com.spark.udf.register.common.UdfRegisterManager
+import com.spark.udf.register.impl.HdfsJarUDFRegister
 
 object Test {
   def main(args: Array[String]): Unit = {
 
-    val udfManager = new UdfRegisterManager(Map("q" -> "w"))("eeee")
+    val udfManager = new HdfsJarUDFRegister("eeee", Map("q" -> "w"))
 
   }
 }

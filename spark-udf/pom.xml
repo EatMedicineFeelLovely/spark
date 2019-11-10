@@ -56,57 +56,21 @@
     <testSourceDirectory>src/test/scala</testSourceDirectory>
       <plugins>
           <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-resources-plugin</artifactId>
-              <version>2.4</version>
-              <configuration>
-                  <outputDirectory>${project.build.outputDirectory}/resources</outputDirectory>
-                  <encoding>UTF-8</encoding>
-                  <resources>
-                      <resource>
-                          <directory>src/main/scala</directory>
-                      </resource>
-                  </resources>
-              </configuration>
-          </plugin>
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-compiler-plugin</artifactId>
-              <version>2.1</version>
-              <configuration>
-                  <source>1.7</source>
-                  <target>1.7</target>
-              </configuration>
-          </plugin>
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-jar-plugin</artifactId>
-              <configuration>
-                  <archive>
-                      <manifest>
-                          <addClasspath>true</addClasspath>
-                          <classpathPrefix></classpathPrefix>
-                      </manifest>
-                  </archive>
-              </configuration>
-          </plugin>
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-dependency-plugin</artifactId>
+              <!-- 这个是必须的 -->
+              <groupId>net.alchim31.maven</groupId>
+              <artifactId>scala-maven-plugin</artifactId>
+              <version>3.2.0</version>
               <executions>
                   <execution>
-                      <id>copy</id>
-                      <phase>package</phase>
                       <goals>
-                          <goal>copy-dependencies</goal>
+                          <goal>compile</goal>
+                          <goal>testCompile</goal>
                       </goals>
                       <configuration>
-                          <outputDirectory>
-                              ${project.build.directory}/lib
-                          </outputDirectory>
-                          <includeGroupIds>
-                              org.apache.kafka
-                          </includeGroupIds>
+                          <args>
+                              <arg>-dependencyfile</arg>
+                              <arg>${project.build.directory}/.scala_dependencies</arg>
+                          </args>
                       </configuration>
                   </execution>
               </executions>
