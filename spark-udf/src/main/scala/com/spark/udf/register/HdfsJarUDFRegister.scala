@@ -1,4 +1,4 @@
-package com.spark.udf.register.common
+package com.spark.udf.register
 
 import java.lang.reflect.Method
 import java.net.{URL, URLClassLoader}
@@ -11,7 +11,7 @@ import scala.collection.mutable
   * 默认从hdfs加载udf jar
   * @param hdsfPath
   */
-class UdfRegisterManager(hdsfPath: String = "") {
+class HdfsJarUDFRegister(hdsfPath: String = "") extends UDFRegisterTrait {
   // udfName -> (object, method)
   lazy val udfMapping = new mutable.HashMap[String, (Any, Method)]
 
