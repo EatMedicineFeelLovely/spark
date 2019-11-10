@@ -34,13 +34,12 @@
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-mllib_${scala.compat.version}</artifactId>
-            <version>${spark.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.github.scopt/scopt -->
         <dependency>
             <groupId>com.github.scopt</groupId>
-            <artifactId>scopt_2.12</artifactId>
+            <artifactId>scopt_${scala.compat.version}</artifactId>
             <version>3.7.1</version>
         </dependency>
 
@@ -73,13 +72,11 @@
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-streaming-kafka-0-10_${scala.compat.version}</artifactId>
-            <version>${spark.version}</version>
         </dependency>
         <!--为 structure streaming 用的	 -->
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-sql-kafka-0-10_${scala.compat.version}</artifactId>
-            <version>${spark.version}</version>
         </dependency>
     </dependencies>
 
@@ -100,14 +97,6 @@
                         </resource>
                     </resources>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
             </plugin>
             <plugin>
                 <!-- 这个是必须的 -->

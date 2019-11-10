@@ -19,7 +19,10 @@
     </licenses>
 
     <dependencies>
-
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_${scala.compat.version}</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
