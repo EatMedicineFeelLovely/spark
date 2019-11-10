@@ -28,7 +28,7 @@ object StructureStreamingStreamJoinTest {
     //例如01的曝光，06的点击，这已经超过5分钟了，所以不能join 。所以点击Watermark 晚5分钟
     //只允许以当前时间为基准向前推5min内的触达数据和10min内的点击数据进行join，超出这个时间界限的数据不会被Stream State维护，避免无止尽的State。
     //printlnDf(spark, impressionDf)
-    streamJoinStream(impressionDf,clickDf)
+    streamJoinStream(impressionDf, clickDf)
     spark.streams.addListener(new StreamingQueryListenerDemo())
     spark.streams.awaitAnyTermination()
 
@@ -91,7 +91,7 @@ object StructureStreamingStreamJoinTest {
       .selectExpr("CAST(value AS STRING)")
       .as[String]
       .mapPartitions(TransFormatFunc.transToAdImpressionLog)
-      .withWatermark("impressEventTime", "5 minutes") //保留3min的数据
+      .withWatermark("impressEventTime", "3 minutes") //保留3min的数据
   }
 
   /**

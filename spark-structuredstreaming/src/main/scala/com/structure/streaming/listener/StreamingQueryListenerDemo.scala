@@ -25,8 +25,8 @@ class StreamingQueryListenerDemo extends StreamingQueryListener {
     val queryName = event.progress.name
     queryName match {
       case "aggregateQuery" =>
-        println(event.progress.json) //getKafkaOffsetRange(event.progress.json)
-      case "foreachBatchSinkQuery" => println(event.progress)
+      // println(event.progress.json) //getKafkaOffsetRange(event.progress.json)
+      case "foreachBatchSinkQuery" => // println(event.progress)
       case "StreamJoinQuery"       => getWatermark(event.progress)
     }
     //println("... onQueryProgress",event.progress.name)
