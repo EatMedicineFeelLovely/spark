@@ -1,0 +1,7 @@
+# Created by .ignore support plugin (hsz.mobi)
+.project
+.idea/
+spark-learn.iml
+spark-sql/.classpath
+spark-sql/.project
+spark-sql/.settings/
