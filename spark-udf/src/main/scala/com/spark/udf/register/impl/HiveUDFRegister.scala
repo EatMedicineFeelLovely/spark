@@ -1,3 +1,5 @@
 package com.spark.udf.register.impl
 
-class HiveUDFRegister extends UDFRegisterTrait {}
+import org.apache.spark.sql.SparkSession
+
+class HiveUDFRegister(spark: SparkSession) extends UDFRegister(spark) {}
