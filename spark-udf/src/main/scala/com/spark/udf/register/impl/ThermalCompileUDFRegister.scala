@@ -5,8 +5,8 @@ import org.apache.spark.sql.SparkSession
 /**
   *  热编译
   */
-class ThermalCompileUDFRegister(spark: SparkSession, map: Map[String, String])
-    extends UDFRegister(spark) {
-  override def register(): Unit = {}
+class ThermalCompileUDFRegister(map: Map[String, String])
+    extends UDFRegisterTrait {
+  override def register(spark: SparkSession): Unit = {}
 
 }

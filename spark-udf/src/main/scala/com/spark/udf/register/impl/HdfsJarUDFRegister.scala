@@ -12,8 +12,7 @@ import scala.collection.mutable
   * 默认从hdfs加载udf jar
   * @param hdsfPath
   */
-class HdfsJarUDFRegister(spark: SparkSession, hdsfPath: String = "")
-    extends UDFRegister(spark) {
+class HdfsJarUDFRegister(hdsfPath: String = "") extends UDFRegisterTrait {
   // udfName -> (object, method)
   lazy val udfMapping = new mutable.HashMap[String, (Any, Method)]
 
@@ -22,10 +21,8 @@ class HdfsJarUDFRegister(spark: SparkSession, hdsfPath: String = "")
     * @param udfMapping
     * @param hdsfPath
     */
-  def this(spark: SparkSession,
-           hdsfPath: String,
-           udfMapping: Map[String, String]) {
-    this(spark, hdsfPath)
+  def this(hdsfPath: String, udfMapping: Map[String, String]) {
+    this(hdsfPath)
     println(udfMapping, hdsfPath)
     // loadJar
   }
@@ -47,4 +44,7 @@ class HdfsJarUDFRegister(spark: SparkSession, hdsfPath: String = "")
     loaderMethod.setAccessible(true)
     loaderMethod.invoke(classLoader, url)
   }
+
+  override def register(spark: SparkSession): Unit = {}
+
 }
