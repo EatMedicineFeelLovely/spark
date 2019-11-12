@@ -4,5 +4,9 @@ import org.apache.spark.sql.SparkSession
 
 class HiveUDFRegister extends UDFRegisterTrait {
 
-  override def register(spark: SparkSession): Unit = {}
+  override def register(spark: SparkSession): Unit = {
+
+
+
+  }
 }
