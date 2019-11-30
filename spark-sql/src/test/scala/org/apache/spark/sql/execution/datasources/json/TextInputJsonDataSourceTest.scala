@@ -71,8 +71,9 @@ object TextInputJsonDataSourceTest extends JsonDataSource {
       input => parser.parse(input, textParser, textToUTF8String),
       parser.options.parseMode,
       schema,
-      parser.options.columnNameOfCorruptRecord,
-      parser.options.multiLine)
+      parser.options.columnNameOfCorruptRecord
+     // ,parser.options.multiLine // 版本问题，需要去掉
+    )
     linesReader.flatMap(safeParser.parse)
   }
 
