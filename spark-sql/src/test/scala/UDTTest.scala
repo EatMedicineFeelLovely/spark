@@ -1,7 +1,7 @@
 import com.spark.code.udt.{HyperLogLog, RegisterSet}
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.types.MapType
-import org.apache.spark.sql.types.udt.{HyperLogLog2}
+import org.apache.spark.sql.types.{MapType, StructType}
+import org.apache.spark.sql.types.udt.{HyperLogLog2, HyperLogLogUDT}
 
 object UDTTest {
   def log2m(rsd: Double): Int =
@@ -43,6 +43,8 @@ object UDTTest {
         }
       }
 
+    df1.toDF("a","b","c").printSchema()
+    new StructType().add("hll", HyperLogLogUDT)
     /**
       * +---+---+---+
       * |key|pv |uv |
@@ -80,7 +82,6 @@ object UDTTest {
       }
       .toDF("key", "pv", "uv")
       .show(false)
-
     /**
       * +---+---+---+
       * |key| pv| uv|

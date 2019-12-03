@@ -33,3 +33,4 @@ class HyperLogLogUDT extends UserDefinedType[HyperLogLog2] {
 
   private[spark] override def asNullable: HyperLogLogUDT = this
 }
+case object HyperLogLogUDT extends HyperLogLogUDT

@@ -306,7 +306,7 @@ public class HyperLogLog implements ICardinality, Serializable {
         public int sizeof() {
             int log2m = log2m(rsd);
             int k = 1 << log2m;
-            return com.clearspring.analytics.stream.cardinality.RegisterSet.getBits(k) * 4;
+            return RegisterSet.getBits(k) * 4;
         }
 
         public static HyperLogLog build(byte[] bytes) throws IOException {
