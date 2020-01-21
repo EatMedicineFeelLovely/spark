@@ -34,8 +34,6 @@ import com.clearspring.analytics.stream.cardinality.CardinalityMergeException;
 import com.clearspring.analytics.stream.cardinality.ICardinality;
 import com.clearspring.analytics.util.Bits;
 import com.clearspring.analytics.util.IBuilder;
-import org.apache.spark.sql.types.SQLUserDefinedType;
-import org.apache.spark.sql.types.udt.*;
 /**
  * Java implementation of HyperLogLog (HLL) algorithm from this paper:
  * <p/>
