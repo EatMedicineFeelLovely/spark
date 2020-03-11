@@ -8,11 +8,10 @@ object OtherTest {
   def main(args: Array[String]): Unit = {
     val clq = new ConcurrentLinkedQueue[String]
     val nstp = ScheduledThreadPool()
-    nstp.addScheduled(() => run1(clq), 1L, 2L, TimeUnit.SECONDS)
-    nstp.addScheduled(() => run2(clq), 1L, 2L, TimeUnit.SECONDS)
-    nstp.addScheduled(() => run3(clq), 1L, 2L, TimeUnit.SECONDS)
-    nstp.addScheduled(() => run4(clq), 1L, 2L, TimeUnit.SECONDS)
-
+//    nstp.addScheduled(() => run1(clq), 1L, 2L, TimeUnit.SECONDS)
+//    nstp.addScheduled(() => run2(clq), 1L, 2L, TimeUnit.SECONDS)
+//    nstp.addScheduled(() => run3(clq), 1L, 2L, TimeUnit.SECONDS)
+//    nstp.addScheduled(() => run4(clq), 1L, 2L, TimeUnit.SECONDS)
   }
   def run1(clq: ConcurrentLinkedQueue[String]) {
     println("线程--- 1 ", Thread.currentThread().getName); clq.add("线程-- 1")

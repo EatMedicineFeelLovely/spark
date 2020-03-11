@@ -1,88 +1,32 @@
-package com.structure.streaming.entry
+package com.spark.stream.test
 
+import com.structure.streaming.caseclass.StructureStreamingCaseClass._
+import com.structure.streaming.func.StructureStreamingWithStateFunc
+import com.structure.streaming.listener.StreamingQueryListenerDemo
 import com.structure.streaming.sink.PrintlnSysSink
-import org.apache.spark.sql.{Dataset, SparkSession}
-import org.apache.log4j.PropertyConfigurator
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.streaming.{GroupStateTimeout, OutputMode}
-import com.structure.streaming.caseclass.StructureStreamingCaseClass._
-import com.structure.streaming.func.{
-  StructureStreamingWithStateFunc,
-  TransFormatFunc
-}
-import com.structure.streaming.listener.StreamingQueryListenerDemo
-import org.apache.ivy.plugins.trigger.Trigger
-import org.apache.spark.streaming.Seconds
-import org.apache.spark.streaming.kafka010.HasOffsetRanges
-object StructureStreamingKafkaTest {
-  //PropertyConfigurator.configure("log4j.properties")
-// 由于Flink与Structured Streaming的架构的不同，task是常驻运行的，flink不需要状态算子
-  // 同样的分区id 会发往同样的task。不像spakr每次都释放，然后再重新申请task，每次分区都会重新在不同的executor上执行
-  // 这导致了spark不能用rocksdb
-  def main(args: Array[String]): Unit = {
-    val spark =
-      SparkSession
-        .builder()
-        .appName("tt")
-        .master("local[*]")
-        .getOrCreate()
+import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
-    spark.sparkContext.setLogLevel("ERROR")
-    import spark.implicits._
-    val df = spark.readStream
-      .format("kafka")
-      .option("group.id", "test,test2")
-      .option("kafka.bootstrap.servers", kafkabroker)
-      .option("subscribe", "test,test2") // 可以多个topic，用逗号分开
-      .option("startingOffsets", "earliest") //
-      .option("failOnDataLoss", "false")
-     // .option("auto.offset.reset", "latest")
-      .option("maxOffsetsPerTrigger", 5) //每个批次最多拉多少条数据，如果6个分区，这里设置15，那每个分区最多取2条= 12 < 15
-      // .option("startingOffsets", """{"topic1":{"0":23,"1":-2},"topic2":{"0":-2}}""")//指定起点
-      .load()
-      //.repartition(2)
-      .selectExpr("CAST(topic AS STRING)")
-      .as[String]
-    //mapGroupsWithState(spark, df.mapPartitions(TransFormatFunc.transToSessionLog))
-    // aggregate(spark, df.mapPartitions(TransFormatFunc.transToAdlog))
-    //waterMarkWindow(spark, df.mapPartitions(TransFormatFunc.transToAdlog))
-    //foreachSink(df.mapPartitions(TransFormatFunc.transToAdlog))
-    foreachBatchSink(spark, df)
-    spark.streams.addListener(new StreamingQueryListenerDemo)
-    spark.streams.awaitAnyTermination()
+class StructureStreamingKafkaTest extends SparkFunSuite with ParamFunSuite {
+  import spark.implicits._
 
-  }
-
-  /**
-    * 对每个batch数据做处理
-    * 10s种一个批次
-    *
-    * @param df
-    */
-  def foreachBatchSink(spark: SparkSession, df: Dataset[String]): Unit = {
-    //对每个批次做处理，这里跟sparkstreaming很像了，只是去掉batch time的概念，
-    val func = (batchDf: Dataset[String], batchid: Long) => {
-     // println(batchid, batchDf.count())
-     // batchDf.foreach(println)
-    }
-    spark.sparkContext
-      .setLocalProperty("spark.scheduler.pool", "pool_foreachBatchSink")
-    df.writeStream
-    // .trigger(Trigger.ProcessingTime("1 seconds"))
+  test("kafka foreachBatch") {
+    kafkaDstreaming(kafkabroker)
+      .writeStream
       .option(
         "checkpointLocation",
         "/Users/eminem/workspace/learnpro/spark-learn/checkpoint/StructureStreamingKafkaTest$"
       )
-      .foreachBatch{(batchDf: Dataset[String], batchid: Long) => {
-         batchDf.show
-       // println(batchid, batchDf.count())
-
-      }}
+      .foreachBatch { (batchDf: Dataset[Row], batchid: Long) =>
+        {
+          batchDf.show
+        }
+      }
       .queryName("foreachBatchSinkQuery") //在listener里面的event.progress.name
       .start()
-    // .awaitTermination()
+    spark.streams.awaitAnyTermination(10000)
   }
-
   /**
     *   foreach data sink
     *

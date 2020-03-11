@@ -14,8 +14,8 @@ package object entry {
 //    val site = arr(14)
 //    Row(date, site)//这个的顺序跟StructType (userSchema)的顺序一一对应
 //  }
-  val kafkabroker = "kafka-1:9092,kafka-2:9092,kafka-3:9092"
-  val topics = "mobileadsdeliverylog"
+  val kafkabroker = "localhost:9092"
+  val topics = "test"
   val clickTopics = "mobileadsclicklog"
 
   val testClickTopic = "test_click"
