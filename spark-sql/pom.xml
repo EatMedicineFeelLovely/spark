@@ -20,6 +20,12 @@
 
 
     <dependencies>
+        <dependency>
+            <groupId>com.spark.learn</groupId>
+            <artifactId>spark-testutil</artifactId>
+            <version>${parent.version}</version>
+            <scope>test</scope>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.scala-lang/scala-compiler -->
         <dependency>
             <groupId>org.scala-lang</groupId>

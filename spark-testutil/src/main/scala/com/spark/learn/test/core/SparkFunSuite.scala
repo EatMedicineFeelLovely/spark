@@ -4,18 +4,20 @@ import org.apache.spark.sql.SparkSession
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 abstract class SparkFunSuite extends FunSuite with BeforeAndAfterAll {
-  var spark: SparkSession = null
+  val spark: SparkSession = SparkSession
+    .builder()
+    .appName("Test")
+    .enableHiveSupport()
+    .master("local[*]")
+    .getOrCreate()
 
-  def addStreamListener(): Unit ={
+  def addStreamListener(): Unit = {
 
   }
+
   protected override def beforeAll(): Unit = {
     super.beforeAll()
-    spark = SparkSession
-      .builder()
-      .appName("Test")
-      .master("local[*]")
-      .getOrCreate()
+
     spark.sparkContext.setLogLevel("ERROR")
 
     //spark.streams.addListener(new StreamingQueryListenerDemo)
@@ -23,7 +25,7 @@ abstract class SparkFunSuite extends FunSuite with BeforeAndAfterAll {
 
   protected override def afterAll(): Unit = {
     super.afterAll()
-  //  spark.stop()
+    //  spark.stop()
   }
 
   def kafkaDstreaming(kafkabroker: String) = {
