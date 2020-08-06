@@ -10,6 +10,7 @@ abstract class SparkFunSuite extends FunSuite with BeforeAndAfterAll {
     .enableHiveSupport()
     .master("local[*]")
     .getOrCreate()
+  spark.sparkContext.setLogLevel("ERROR")
 
   def addStreamListener(): Unit = {
 
@@ -18,7 +19,6 @@ abstract class SparkFunSuite extends FunSuite with BeforeAndAfterAll {
   protected override def beforeAll(): Unit = {
     super.beforeAll()
 
-    spark.sparkContext.setLogLevel("ERROR")
 
     //spark.streams.addListener(new StreamingQueryListenerDemo)
   }

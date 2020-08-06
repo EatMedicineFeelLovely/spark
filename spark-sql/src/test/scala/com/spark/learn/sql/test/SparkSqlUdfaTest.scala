@@ -1,5 +1,7 @@
 package com.spark.learn.sql.test
 
-object SparkSqlUdfaTest {
+import com.spark.learn.test.core.{ParamFunSuite, SparkFunSuite}
+
+class SparkSqlUdfaTest extends SparkFunSuite with ParamFunSuite {
 
 }

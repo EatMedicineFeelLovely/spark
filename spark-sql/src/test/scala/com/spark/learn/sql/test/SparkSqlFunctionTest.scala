@@ -1,5 +1,7 @@
 package com.spark.learn.sql.test
 
-object SparkSqlFunctionTest {
+import com.spark.learn.test.core.{ParamFunSuite, SparkFunSuite}
+
+class SparkSqlFunctionTest extends SparkFunSuite with ParamFunSuite {
 
 }

@@ -6,10 +6,8 @@ import org.apache.spark.sql.types.{DataType, StringType, StructField, StructType
 
 import scala.collection.JavaConverters._
 
-object SparkSqlCoreTest extends SparkFunSuite with ParamFunSuite {
-
+class SparkSqlCoreTest extends SparkFunSuite with ParamFunSuite {
   import spark.implicits._
-
   test("spark sql createDataFrame") {
     case class WordCount(word: String, count: Long)
     // 方法1
