@@ -13,6 +13,9 @@
         <module>spark-sql</module>
         <module>spark-core</module>
         <module>spark-udf</module>
+        <module>spark-testutil</module>
+        <module>resources</module>
+        <module>assembly</module>
     </modules>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -22,69 +25,108 @@
         <scala.version>2.12.8</scala.version>
         <scala.compat.version>2.12</scala.compat.version>
     </properties>
-<dependencyManagement>
-    <dependencies>
-        <!-- 解决 java.lang.ArrayIndexOutOfBoundsException: 10582 问题-->
-        <dependency>
-            <groupId>com.thoughtworks.paranamer</groupId>
-            <artifactId>paranamer</artifactId>
-            <version>2.8</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-hive -->
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-hive_${scala.compat.version}</artifactId>
-            <version>${spark.version}</version>
-        </dependency>
+    <dependencyManagement>
 
-        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.58</version>
-        </dependency>
+        <dependencies>
+            <!-- 解决 java.lang.ArrayIndexOutOfBoundsException: 10582 问题-->
+            <dependency>
+                <groupId>com.thoughtworks.paranamer</groupId>
+                <artifactId>paranamer</artifactId>
+                <version>2.8</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-hive -->
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-hive_${scala.compat.version}</artifactId>
+                <version>${spark.version}</version>
+            </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-core_2.11 -->
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_${scala.compat.version}</artifactId>
-            <version>${spark.version}</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-sql_2.11 -->
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_${scala.compat.version}</artifactId>
-            <version>${spark.version}</version>
-        </dependency>
+            <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.58</version>
+            </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-streaming_2.11 -->
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-streaming_${scala.compat.version}</artifactId>
-            <version>${spark.version}</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-streaming-kafka-0-8_2.11 -->
-        <!--为 spark streaming 用的	 -->
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-streaming-kafka-0-10_${scala.compat.version}</artifactId>
-            <version>${spark.version}</version>
-        </dependency>
-        <!--为 structure streaming 用的	 -->
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql-kafka-0-10_${scala.compat.version}</artifactId>
-            <version>${spark.version}</version>
-        </dependency>
+            <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-core_2.11 -->
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-core_${scala.compat.version}</artifactId>
+                <version>${spark.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-sql_2.11 -->
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-sql_${scala.compat.version}</artifactId>
+                <version>${spark.version}</version>
+            </dependency>
 
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-mllib_${scala.compat.version}</artifactId>
-            <version>${spark.version}</version>
-        </dependency>
+            <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-streaming_2.11 -->
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-streaming_${scala.compat.version}</artifactId>
+                <version>${spark.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-streaming-kafka-0-8_2.11 -->
+            <!--为 spark streaming 用的	 -->
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-streaming-kafka-0-10_${scala.compat.version}</artifactId>
+                <version>${spark.version}</version>
+            </dependency>
+            <!--为 structure streaming 用的	 -->
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-sql-kafka-0-10_${scala.compat.version}</artifactId>
+                <version>${spark.version}</version>
+            </dependency>
 
-    </dependencies>
-</dependencyManagement>
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-mllib_${scala.compat.version}</artifactId>
+                <version>${spark.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <env>dev</env>
+                <scope.value>provided</scope.value>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>local</id>
+            <properties>
+                <env>local</env>
+                <scope.value>compile</scope.value>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+
+        <profile>
+            <id>pre</id>
+            <properties>
+                <env>pre</env>
+                <scope.value>provided</scope.value>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>prod</id>
+            <properties>
+                <env>prod</env>
+                <scope.value>provided</scope.value>
+            </properties>
+        </profile>
+    </profiles>
     <build>
         <pluginManagement>
             <plugins>
