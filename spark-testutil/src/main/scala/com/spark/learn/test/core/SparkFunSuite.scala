@@ -1,34 +1,35 @@
-package com.spark.stream.test
+package com.spark.learn.test.core
 
-import com.structure.streaming.listener.StreamingQueryListenerDemo
-import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.catalyst.optimizer.ConvertToLocalRelation
-import org.apache.spark.sql.internal.SQLConf
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 abstract class SparkFunSuite extends FunSuite with BeforeAndAfterAll {
-  val spark: SparkSession = SparkSession
-    .builder()
-    .appName("Test")
-    .master("local[*]")
-    .getOrCreate()
-  spark.sparkContext.setLogLevel("ERROR")
+  var spark: SparkSession = null
 
+  def addStreamListener(): Unit ={
+
+  }
   protected override def beforeAll(): Unit = {
     super.beforeAll()
-    spark.streams.addListener(new StreamingQueryListenerDemo)
+    spark = SparkSession
+      .builder()
+      .appName("Test")
+      .master("local[*]")
+      .getOrCreate()
+    spark.sparkContext.setLogLevel("ERROR")
+
+    //spark.streams.addListener(new StreamingQueryListenerDemo)
   }
 
   protected override def afterAll(): Unit = {
     super.afterAll()
-    spark.stop()
+  //  spark.stop()
   }
 
   def kafkaDstreaming(kafkabroker: String) = {
     spark.readStream
       .format("kafka")
-      .option("group.id", "test,test2")
+      .option("group.id", "test")
       .option("kafka.bootstrap.servers", kafkabroker)
       .option("subscribe", "test,test2") // 可以多个topic，用逗号分开
       .option("startingOffsets", "earliest") //
