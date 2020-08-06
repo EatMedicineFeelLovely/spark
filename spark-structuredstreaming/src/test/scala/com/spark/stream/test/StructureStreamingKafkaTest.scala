@@ -1,23 +1,21 @@
 package com.spark.stream.test
 
+import com.spark.learn.test.core.SparkFunSuite
 import com.structure.streaming.caseclass.StructureStreamingCaseClass._
 import com.structure.streaming.func.StructureStreamingWithStateFunc
-import com.structure.streaming.listener.StreamingQueryListenerDemo
 import com.structure.streaming.sink.PrintlnSysSink
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.streaming.{GroupStateTimeout, OutputMode}
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
-
 class StructureStreamingKafkaTest extends SparkFunSuite with ParamFunSuite {
   import spark.implicits._
-
   test("kafka foreachBatch") {
     kafkaDstreaming(kafkabroker)
       .writeStream
-      .option(
-        "checkpointLocation",
-        "/Users/eminem/workspace/learnpro/spark-learn/checkpoint/StructureStreamingKafkaTest$"
-      )
+//      .option(
+//        "checkpointLocation",
+//        "/Users/eminem/workspace/learnpro/spark-learn/checkpoint/StructureStreamingKafkaTest$"
+//      )
       .foreachBatch { (batchDf: Dataset[Row], batchid: Long) =>
         {
           batchDf.show

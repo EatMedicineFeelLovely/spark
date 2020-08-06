@@ -6,3 +6,10 @@ spark-sql/.classpath
 spark-sql/.project
 spark-sql/.settings/
 target
+spark-udf/spark-udf.iml
+spark-warehouse/
+/spark-sql/target/
+/spark-sql/target/
+/spark-sql/target/
+src/main/scala/com/spark/learn/ALSExample.scala
+/spark-sql/target/

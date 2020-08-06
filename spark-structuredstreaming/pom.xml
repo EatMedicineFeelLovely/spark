@@ -19,6 +19,12 @@
     </licenses>
 
     <dependencies>
+        <dependency>
+            <groupId>com.spark.learn</groupId>
+            <artifactId>spark-testutil</artifactId>
+            <version>${parent.version}</version>
+            <scope>test</scope>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-streaming-kafka-0-10 -->
         <dependency>
             <groupId>org.scalatest</groupId>
