@@ -7,11 +7,11 @@ import com.spark.code.udt.{HyperLogLog, RegisterSet}
 import org.apache.spark.sql.types.{BinaryType, DataType, SQLUserDefinedType, UserDefinedType}
 
 @SQLUserDefinedType(udt = classOf[HyperLogLogUDT])
-case class HyperLogLog2(k: Int, registerSets: RegisterSet)
-    extends HyperLogLog(k, registerSets) {}
+case class HyperLogLog2(k: Int, r: RegisterSet) extends HyperLogLog(k, r){
+  override def toString: String = cardinality().toString
+}
 
 class HyperLogLogUDT extends UserDefinedType[HyperLogLog2] {
-
   override def sqlType: DataType = BinaryType
 
   override def pyUDT: String = "pyspark.testing.sqlutils.ExamplePointUDT"
@@ -26,11 +26,12 @@ class HyperLogLogUDT extends UserDefinedType[HyperLogLog2] {
     val byteArraySize = serializedByteStream.readInt
     val r = new RegisterSet(1 << log2m,
                             Bits.getBits(serializedByteStream, byteArraySize))
-    new HyperLogLog2(log2m, r)
+    HyperLogLog2(log2m, r)
   }
 
   override def userClass: Class[HyperLogLog2] = classOf[HyperLogLog2]
 
   private[spark] override def asNullable: HyperLogLogUDT = this
 }
+
 case object HyperLogLogUDT extends HyperLogLogUDT

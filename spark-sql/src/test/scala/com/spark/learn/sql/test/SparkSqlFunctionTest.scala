@@ -38,7 +38,7 @@ class SparkSqlFunctionTest extends SparkFunSuite with ParamFunSuite {
       .add("项目", StringType)
       .add("收入", IntegerType)
     val df = spark.createDataset(
-      Array(Row("2018-01", "项目1", 100),Row("2018-01", "项目1", 100), Row("2018-01", "项目2", 200)))(
+      Array(Row("2018-01", "项目1", 100),Row("2018-01", "项目1", 100), Row("2018-01", "项目2", 200),Row("2018-01", "项目44", 200)))(
       RowEncoder(structype))
     df.groupBy("day")
       .pivot("项目", List("项目1", "项目2"))
@@ -55,14 +55,10 @@ class SparkSqlFunctionTest extends SparkFunSuite with ParamFunSuite {
       .agg(sum("收入"))
       .show
 
-    df.createOrReplaceTempView("test")
-    spark.sql(
-      s"""select * from (select * from test)
-         |PIVOT (
-         |      sum(收入)
-         |        FOR 项目 IN ('项目1','项目2')
-         |    )
-         |""".stripMargin)
+// 全部都做字段
+    df.groupBy("day")
+      .pivot("项目")
+      .agg(sum("收入"))
       .show
 
   }

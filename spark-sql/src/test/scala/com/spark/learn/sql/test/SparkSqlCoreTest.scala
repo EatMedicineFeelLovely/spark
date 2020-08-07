@@ -1,6 +1,7 @@
 package com.spark.learn.sql.test
 
-import com.spark.learn.test.bean.TestCaseClass.WordCount
+import com.spark.code.udt.RegisterSet
+import com.spark.learn.test.bean.TestCaseClass.{PageViewLog, WordCount}
 import com.spark.learn.test.bean.SqlSchameUtil._
 import com.spark.learn.test.core.{ParamFunSuite, SparkFunSuite}
 import org.apache.spark.sql.Row
@@ -15,6 +16,9 @@ import org.apache.spark.sql.types.{
 
 import scala.collection.JavaConverters._
 import org.apache.spark.sql.functions._
+import org.apache.spark.sql.types.udt.HyperLogLog2
+
+import scala.collection.mutable
 
 class SparkSqlCoreTest extends SparkFunSuite with ParamFunSuite {
 
@@ -100,11 +104,50 @@ class SparkSqlCoreTest extends SparkFunSuite with ParamFunSuite {
       .withColumn("maptype", map($"id", $"structtype"))
     ds.show
 
-    ds.select(expr("maptype['id'] as mid"), expr("maptype['null'] as mnull")).show
+    ds.select(expr("maptype['id'] as mid"), expr("maptype['null'] as mnull"))
+      .show
 
     ds.createOrReplaceTempView("test")
     spark.sql(s"select *,maptype['id'], maptype['null'] from test").show
 
     // map_form_arrays 将两个数组合成map
+  }
+
+  /**
+    *
+    */
+  test("spark udt 自定义 类型") {
+    def log2m(rsd: Double): Int =
+      (Math.log((1.106 / rsd) * (1.106 / rsd)) / Math.log(2)).toInt
+
+    // 计算hyper
+    val hyper_udf = (list: mutable.WrappedArray[String]) => {
+      val hyperLogLog2 = HyperLogLog2(log2m(0.05), new RegisterSet(1 << log2m(0.05)))
+      list.foreach(r => hyperLogLog2.offer(r))
+      (list.size, hyperLogLog2)
+    }
+    // 从hyper信息中算uv
+    val hyper_uv = (hyper: HyperLogLog2) => {
+      hyper.cardinality()
+    }
+
+    spark.udf.register("hyper_udf", hyper_udf)
+    spark.udf.register("hyper_uv", hyper_uv)
+
+    val ds = spark.createDataset(
+      Array(PageViewLog("url1", "user1"),
+            PageViewLog("url1", "user2"),
+            PageViewLog("url1", "user1"),
+            PageViewLog("url2", "user4"),
+            PageViewLog("url2", "user4")))
+    ds
+      .groupBy($"url")
+      .agg(collect_list("user").as("user_list"))
+      .withColumn("pv_uv", expr("hyper_udf(user_list)"))
+      .withColumn("pv", $"pv_uv".getField("_1"))
+      .withColumn("uv", $"pv_uv".getField("_2"))
+      .show
+
+
   }
 }
