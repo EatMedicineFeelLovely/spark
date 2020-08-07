@@ -7,7 +7,7 @@ abstract class SparkFunSuite extends FunSuite with BeforeAndAfterAll {
   val spark: SparkSession = SparkSession
     .builder()
     .appName("Test")
-    .enableHiveSupport()
+    // .enableHiveSupport()
     .master("local[*]")
     .getOrCreate()
   spark.sparkContext.setLogLevel("ERROR")

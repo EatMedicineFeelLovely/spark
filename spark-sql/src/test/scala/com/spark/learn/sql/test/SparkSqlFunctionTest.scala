@@ -1,7 +1,10 @@
 package com.spark.learn.sql.test
 
 import com.spark.learn.test.core.{ParamFunSuite, SparkFunSuite}
+import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.functions._
+import org.apache.spark.sql.types.{IntegerType, StringType, StructType}
+import org.apache.spark.sql.Row
 
 /**
   * sql里面的自带函数
@@ -26,13 +29,47 @@ class SparkSqlFunctionTest extends SparkFunSuite with ParamFunSuite {
     sqlds.show()
   }
 
-  test("pivot"){
+  /**
+    * 将数据转为字段
+    */
+  test("pivot") {
+    val structype = new StructType()
+      .add("day", StringType)
+      .add("项目", StringType)
+      .add("收入", IntegerType)
+    val df = spark.createDataset(
+      Array(Row("2018-01", "项目1", 100),Row("2018-01", "项目1", 100), Row("2018-01", "项目2", 200)))(
+      RowEncoder(structype))
+    df.groupBy("day")
+      .pivot("项目", List("项目1", "项目2"))
+      .agg(sum("收入"))
+      .show
+
+    df.groupBy("day")
+      .pivot("项目", List("项目1", "项目2", "项目3"))
+      .agg(sum("收入"))
+      .show
+
+    df.groupBy("day")
+      .pivot("项目", List("项目1"))
+      .agg(sum("收入"))
+      .show
+
+    df.createOrReplaceTempView("test")
+    spark.sql(
+      s"""select * from (select * from test)
+         |PIVOT (
+         |      sum(收入)
+         |        FOR 项目 IN ('项目1','项目2')
+         |    )
+         |""".stripMargin)
+      .show
 
   }
 
   /**
-   *
-   */
+    *
+    */
   test("collect_set") {
     val ds = spark.read.json(
       "/Users/eminem/workspace/git_pro/spark-learn/resources/datafile/arr_map_struc.json")

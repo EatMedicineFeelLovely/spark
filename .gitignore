@@ -13,3 +13,5 @@ spark-warehouse/
 /spark-sql/target/
 src/main/scala/com/spark/learn/ALSExample.scala
 /spark-sql/target/
+/spark-sql/target/classes/com/spark/learn/
+/spark-sql/target/test-classes/
