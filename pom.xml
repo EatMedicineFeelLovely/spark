@@ -86,7 +86,17 @@
                 <artifactId>spark-mllib_${scala.compat.version}</artifactId>
                 <version>${spark.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.backuity.clist</groupId>
+                <artifactId>clist-core_${scala.compat.version}</artifactId>
+                <version>3.5.0</version>
+            </dependency>
 
+            <dependency>
+                <groupId>org.backuity.clist</groupId>
+                <artifactId>clist-macros_${scala.compat.version}</artifactId>
+                <version>3.5.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <profiles>
