@@ -147,7 +147,24 @@ class SparkSqlCoreTest extends SparkFunSuite with ParamFunSuite {
       .withColumn("pv", $"pv_uv".getField("_1"))
       .withColumn("uv", $"pv_uv".getField("_2"))
       .show
+  }
 
 
+  /**
+   *
+   */
+  test("spark 布隆过滤器 bloomFilter"){
+    val ds = spark.createDataset((5 to 10).map(x => PageViewLog(x.toString, "")))
+    val ds2 = spark.createDataset((1 to 10).map(x => PageViewLog(x.toString, "")))
+
+    val bl = ds.coalesce(10)
+      .stat
+      .bloomFilter("url", ds.count * 2, 0.0001)
+
+    val blBroadc = spark.sparkContext.broadcast(bl)
+    // 判断某些数据存不存在
+    ds2.map(x => {
+      (x, blBroadc.value.mightContainString(x.url))})
+      .foreach(x => println(x))
   }
 }
