@@ -10,19 +10,23 @@ class CustomSqlParserVisitorImpl extends CustomSqlParserBaseVisitor[AbstractVisi
 //    CheckpointVisitOperation(ctx.table.getText, ctx.location.getText)
 //  }
   override def visitHelloWordStatement(ctx: CustomSqlParserParser.HelloWordStatementContext): AbstractVisitOperation = {
+   println(ctx.word)
+
     HelloWordVisitOperation(ctx.word.getText)
   }
   override def visitCheckpointStatement(ctx: CustomSqlParserParser.CheckpointStatementContext): AbstractVisitOperation = {
-        CheckpointVisitOperation(ctx.table.getText, ctx.location.getText)
+    CheckpointVisitOperation(ctx.table.getText, ctx.location.getText)
   }
-//  override def visitCheckpoint(ctx: CustomSqlParserParser.CheckpointContext): AbstractVisitOperation = {
-//    print("xxxx")
-//
-//    visitCheckpointStatement(ctx.checkpointStatement())
-//  }
+
+  /**
+   * 先进的这个，再进 @link  visitCheckpointStatement
+   * @param ctx the parse tree
+   *    */
+  override def visitCheckpoint(ctx: CustomSqlParserParser.CheckpointContext): AbstractVisitOperation = {
+   visitCheckpointStatement(ctx.checkpointStatement())
+  }
 
   override def visitHelloWord(ctx: CustomSqlParserParser.HelloWordContext): AbstractVisitOperation = {
-print(">>>>>>>>>>")
     visitHelloWordStatement(ctx.helloWordStatement())
   }
 

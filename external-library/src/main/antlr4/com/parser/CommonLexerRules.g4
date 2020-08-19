@@ -1,14 +1,16 @@
 lexer grammar CommonLexerRules;
-
-
-
-
-
 CHECKPOINT:'checkpoint' | 'CHECKPOINT';
+
+
+
+PRT
+ : 'PRINT'
+ | 'print';
+
+
 INTO
         : 'into' | 'INTO'
         ;
-
 // 定义关键词的
 WS : [ \t\r\n]+ -> skip;
 IDENTIFIER
@@ -31,8 +33,9 @@ COMMENT : '/*' .*? '*/' -> skip;
 
 MUL : '*';
 ADD : '+';
-PRT : 'PRINT' | 'print';
 INT : '0' | [1-9][0-9]*;
 NEWLINE : '\r'?'\n';
 STRING : '"' .*? '"'
 | '\'' .*? '\'';
+
+
