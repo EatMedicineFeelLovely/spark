@@ -1,7 +1,7 @@
 package com.antrl.test
 
 import com.antlr4.parser.{CustomSqlParserLexer, CustomSqlParserParser}
-import com.antrl4.visit.operation.impl.{AbstractVisitOperation, CheckpointVisitOperation, HelloWordVisitOperation}
+import com.antrl4.visit.operation.impl.{AbstractVisitOperation, CheckpointVisitOperation, HbaseSearchInfoOperation, HelloWordVisitOperation}
 import com.antrl4.visit.parser.impl.CustomSqlParserVisitorImpl
 import org.antlr.v4.runtime.{CharStreams, CodePointCharStream, CommonTokenStream}
 
@@ -15,17 +15,13 @@ object App {
     val inputStream2 = CharStreams.fromString("checkpoint ab.`table` into 'hdfs:///ssxsxs/ssxxs'")
 
     val inputStream3 = CharStreams.fromString(
-      "select info (name1 string , name2 string) FROM hbasetable where key='abc'")
+      "select info(name1 string , name2 string),info3(name3 string , name4 string) FROM hbasetable where key='abc'")
 
 
     visit(inputStream3) match {
-      case a: HelloWordVisitOperation => {
-        println(a)
-      }
-      case b: CheckpointVisitOperation => {
-        println(b)
-      }
-      case _ => println(null)
+      case a: HelloWordVisitOperation => println(a)
+      case b: CheckpointVisitOperation => println(b)
+      case c: HbaseSearchInfoOperation => println(c)
     }
   }
 

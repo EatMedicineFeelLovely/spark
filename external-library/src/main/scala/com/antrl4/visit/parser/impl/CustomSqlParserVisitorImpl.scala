@@ -1,11 +1,7 @@
 package com.antrl4.visit.parser.impl
 
 import com.antlr4.parser.{CustomSqlParserBaseVisitor, CustomSqlParserParser}
-import com.antrl4.visit.operation.impl.{
-  AbstractVisitOperation,
-  CheckpointVisitOperation,
-  HelloWordVisitOperation
-}
+import com.antrl4.visit.operation.impl._
 
 class CustomSqlParserVisitorImpl
     extends CustomSqlParserBaseVisitor[AbstractVisitOperation] {
@@ -37,6 +33,7 @@ class CustomSqlParserVisitorImpl
     visitHelloWordStatement(ctx.helloWordStatement())
   }
 
+
   /**
     *
     */
@@ -44,18 +41,14 @@ class CustomSqlParserVisitorImpl
       ctx: CustomSqlParserParser.SelectHbaseContext): AbstractVisitOperation = {
     val hbaseInfo = ctx.hBaseSearchState()
     import scala.collection.JavaConverters._
-    hbaseInfo.familyColumns.asScala.foreach(family => {
+    val familyInfos = hbaseInfo.hBaseFamilyState().asScala.map(family => {
       val columns = family.columnDefineState()
-      columns.asScala.foreach(colms => {
-        println(
-          hbaseInfo.tableName.getText,
-          family.familyName.getText,
-          colms.colName.getText,
-          colms.colType.getText
-        )
+      val columnsInfo = columns.asScala.map(colms => {
+        HbaseColumnsInfoOperation(colms.colName.getText, colms.colType.getText)
       })
+      HbaseFamilyColumnsInfoOperation(family.familyName.getText, columnsInfo)
     })
-    null
+    HbaseSearchInfoOperation(hbaseInfo.tableName.getText, hbaseInfo.key.getText, familyInfos)
   }
 
 }

@@ -23,7 +23,7 @@ tableIdentifier
     : (db=IDENTIFIER '.')? table=IDENTIFIER
     ;
 
-// 有多个 familyColumns 。  familyColumns里面的 columns 由多个 hBaseFamilyState
+// 有多个 familyColumns 。  familyColumns里面的 familys 由多个 hBaseFamilyState
 hBaseSearchState
 :SELECT familyColumns+=hBaseFamilyState (',' familys+=hBaseFamilyState)* FROM tableName=IDENTIFIER  WHERE 'key=' key=STRING
 ;
