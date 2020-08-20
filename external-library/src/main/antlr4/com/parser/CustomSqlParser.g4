@@ -6,6 +6,7 @@ customcal
 : helloWordStatement EOF   #helloWord
 | checkpointStatement EOF #checkpoint
 | hBaseSearchState EOF #selectHbase
+| hbaseJoinState EOF #hbaseJoin
 ;
 
 // helloWordStatement
@@ -21,18 +22,19 @@ checkpointStatement
 
 tableIdentifier
     : (db=IDENTIFIER '.')? table=IDENTIFIER
+    | (db=IDENTIFIER ':')? table=IDENTIFIER
     ;
 
 // 有多个 familyColumns 。  familyColumns里面的 familys 由多个 hBaseFamilyState
 hBaseSearchState
-:SELECT familyColumns+=hBaseFamilyState (',' familys+=hBaseFamilyState)* FROM tableName=IDENTIFIER  WHERE 'key=' key=STRING
+:SELECT familyColumns+=hBaseFamilyState (',' familyColumns+=hBaseFamilyState)* FROM tableName=IDENTIFIER  WHERE 'key=' key=STRING
 ;
 // hBaseColumnFamilyState 是由 (  N个   columnDefineState 组成 ) ; columnDefineState 是由 多个 columnDefineState
 // columnDefineState 由零个或多个’,’隔开field序列列表
 // +=  +表示匹配一次或多次，  = 表示赋值
 // info (name1 string, name2 string)
 hBaseFamilyState
-    : familyName=IDENTIFIER '(' columns+=columnDefineState (',' colAndType+=columnDefineState)* ')'
+    : familyName=IDENTIFIER '(' columns+=columnDefineState (',' columns+=columnDefineState)* ')'
     ;
 
 columnDefineState
@@ -40,6 +42,17 @@ columnDefineState
     ;
 
 
+// 这里要携程 (',' cols+=hbaseJoincolumn) 而不能是 (',' hbaseJoincolumn)，否则cols拿不到完整的
+hbaseJoinState
+: SELECT cols+=hbaseJoincolumn (',' cols+=hbaseJoincolumn)* FROM tablename=tableIdentifier JOIN hbasetable=tableIdentifier ON
+ ROWKEY '=' joinkey=hbaseJoincolumn;
+
+hbaseJoincolumn: (family=IDENTIFIER '.')? colname=IDENTIFIER
+;
+
+ROWKEY : 'rowkey' | 'ROWKEY';
+JOIN: 'join'
+ | 'JOIN';
 SELECT : 'select'
  | 'SELECT';
 FROM : 'from'

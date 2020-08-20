@@ -1,7 +1,7 @@
 package com.antrl.test
 
 import com.antlr4.parser.{CustomSqlParserLexer, CustomSqlParserParser}
-import com.antrl4.visit.operation.impl.{AbstractVisitOperation, CheckpointVisitOperation, HbaseSearchInfoOperation, HelloWordVisitOperation}
+import com.antrl4.visit.operation.impl.{AbstractVisitOperation, CheckpointVisitOperation, HbaseJoinInfoOperation, HbaseSearchInfoOperation, HelloWordVisitOperation}
 import com.antrl4.visit.parser.impl.CustomSqlParserVisitorImpl
 import org.antlr.v4.runtime.{CharStreams, CodePointCharStream, CommonTokenStream}
 
@@ -17,11 +17,16 @@ object App {
     val inputStream3 = CharStreams.fromString(
       "select info(name1 string , name2 string),info3(name3 string , name4 string) FROM hbasetable where key='abc'")
 
+    val inputStream4 = CharStreams.fromString(
+      "select a,b,info.ac FROM lefttable JOIN default:hbasetable ON ROWKEY = joinkeyxxx")
 
-    visit(inputStream3) match {
+
+    visit(inputStream4) match {
       case a: HelloWordVisitOperation => println(a)
       case b: CheckpointVisitOperation => println(b)
       case c: HbaseSearchInfoOperation => println(c)
+      case d: HbaseJoinInfoOperation => println(d)
+      case _ =>
     }
   }
 
