@@ -45,21 +45,24 @@ columnDefineState
 // 这里要携程 (',' cols+=hbaseJoincolumn) 而不能是 (',' hbaseJoincolumn)，否则cols拿不到完整的
 hbaseJoinState
 : SELECT cols+=hbaseJoincolumn (',' cols+=hbaseJoincolumn)* FROM tablename=tableIdentifier JOIN hbasetable=tableIdentifier ON
- ROWKEY '=' joinkey=hbaseJoincolumn;
+ ROWKEY '=' joinkey=hbaseJoincolumn  CONF ZK '=' zk=STRING;
 
 hbaseJoincolumn: (family=IDENTIFIER '.')? colname=IDENTIFIER
 ;
 
-ROWKEY : 'rowkey' | 'ROWKEY';
-JOIN: 'join'
- | 'JOIN';
-SELECT : 'select'
- | 'SELECT';
-FROM : 'from'
- | 'FROM';
-ON : 'on'
- | 'ON' ;
-WHERE : 'WHERE'
-|'where';
+
+//
+//CHECKPOINT:'checkpoint' | 'CHECKPOINT';
+//CONF : 'conf' | 'CONF';
+//ZK : 'zk' | 'ZK';
+//ROWKEY : 'rowkey' | 'ROWKEY';
+//JOIN: 'join'| 'JOIN';
+//SELECT : 'select'| 'SELECT';
+//FROM : 'from'| 'FROM';
+//ON : 'on'| 'ON' ;
+//WHERE : 'WHERE'|'where';
+//PRT: 'PRINT'| 'print';
+//INTO: 'into' | 'INTO';
+
 
 

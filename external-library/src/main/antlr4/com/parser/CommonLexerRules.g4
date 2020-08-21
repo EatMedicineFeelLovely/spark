@@ -1,16 +1,15 @@
 lexer grammar CommonLexerRules;
 CHECKPOINT:'checkpoint' | 'CHECKPOINT';
-
-
-
-PRT
- : 'PRINT'
- | 'print';
-
-
-INTO
-        : 'into' | 'INTO'
-        ;
+CONF : 'conf' | 'CONF';
+ZK : 'zk' | 'ZK';
+ROWKEY : 'rowkey' | 'ROWKEY';
+JOIN: 'join'| 'JOIN';
+SELECT : 'select'| 'SELECT';
+FROM : 'from'| 'FROM';
+ON : 'on'| 'ON' ;
+WHERE : 'WHERE'|'where';
+PRT: 'PRINT'| 'print';
+INTO: 'into' | 'INTO';
 // 定义关键词的
 WS : [ \t\r\n]+ -> skip;
 IDENTIFIER
