@@ -1,23 +1,18 @@
 package com.antrl.test
 
+import java.util
+
 import com.antlr4.parser.{CustomSqlParserLexer, CustomSqlParserParser}
-import com.antrl4.visit.operation.impl.{
-  AbstractVisitOperation,
-  CheckpointVisitOperation,
-  HbaseJoinInfoOperation,
-  HbaseSearchInfoOperation,
-  HelloWordVisitOperation
-}
+import com.antrl4.visit.operation.impl.{AbstractVisitOperation, CheckpointVisitOperation, HbaseJoinInfoOperation, HbaseSearchInfoOperation, HelloWordVisitOperation}
 import com.antrl4.visit.parser.impl.CustomSqlParserVisitorImpl
 import com.spark.learn.test.core.{ParamFunSuite, SparkFunSuite}
-import org.antlr.v4.runtime.{
-  CharStreams,
-  CodePointCharStream,
-  CommonTokenStream
-}
+import org.antlr.v4.runtime.{CharStreams, CodePointCharStream, CommonTokenStream}
+import org.apache.hadoop.hbase.client.Result
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
-import org.apache.spark.sql.types.{StructField, StructType}
-import org.apache.spark.sql.{Dataset, Row}
+import org.apache.spark.sql.types.{DataType, StringType, StructField, StructType}
+import org.apache.spark.sql.{types, Dataset, Row}
+
+import scala.collection.mutable.ArrayBuffer
 
 /**
   * @author ${user.name}
@@ -71,18 +66,9 @@ class App extends SparkFunSuite with ParamFunSuite {
       case d: HbaseJoinInfoOperation => {
         val df = spark.createDataset(Seq(Row("word1", 1), Row("word2", 2)))(
           RowEncoder(schame))
-        //        df.map(r => {
-        //          val c =
-        //          d.cols.map(x => {
-        //            if(x.family == null || x.family.equals("null") || x.family.isEmpty){
-        //              r.get(schame(x.colname)._1)
-        //            } else {
-        //              "hbaseV"
-        //            }
-        //          })
-        //        Row.fromSeq(c)
-        //        })(RowEncoder(newSchema))
-        //          .show
+        val newDf = joinHbase(df, d)
+        newDf.printSchema()
+        newDf.show
       }
       case _ => println("xxx")
     }
@@ -107,40 +93,62 @@ class App extends SparkFunSuite with ParamFunSuite {
     * @param df
     * @param d
     */
-  def joinHbase(df: Dataset[Row], d: HbaseJoinInfoOperation): Unit = {
+  def joinHbase(df: Dataset[Row], d: HbaseJoinInfoOperation): Dataset[Row] = {
     // 原始DF的schame
     val schame = df.schema
       .map(x => (x.name, x))
       .zip(0 to (df.schema.size - 1))
       .map(x => (x._1._1, (x._2, x._1._2)))
       .toMap // schamename -> (index, struct)
-    // sql之后的 schame
-    var newSchema = new StructType()
+    // sql之后的 schame的map信息,index位置等
+    val newSchameMap = new ArrayBuffer[((String, String), (Int, StructField))]()
     d.cols.foreach(x => {
       if (x.family == null || x.family.equals("null") || x.family.isEmpty) {
-        newSchema = newSchema.add(schame(x.colname)._2)
+        newSchameMap.+=(((x.family, x.colname), schame(x.colname)))
       } else { // hbase的数据统一string类型
-        newSchema = newSchema.add(x.family + "." + x.colname, "string")
+        newSchameMap.+=(
+          ((x.family, x.colname),
+           (-1, StructField(x.family + "." + x.colname, StringType))))
       }
     })
+    // 新df的schame
+    val newSchame = StructType(newSchameMap.map(_._2._2))
+    // rowkey在df中的index位置
     val indexHbaseRowkey = schame(d.joinkey)._1
     df.mapPartitions(itor => {
       val list = itor.toList
       // hbase conn
-      val gets = list.map { x =>
+      val rowkeyGets = list.map { x =>
         x.get(indexHbaseRowkey).toString
       }
+      // hbase gets
+      val result = Array.ofDim[Result](rowkeyGets.size)
 
-      gets.zip(list)
-
-
-
-
-
-
-
-      itor
-    })(RowEncoder(newSchema))
+      result
+        .zip(list)
+        .map {
+          case (result, row) => {
+            val newR =
+              newSchameMap.map {
+                case ((family, colname), (index, tp)) =>
+                  if (index < 0) {
+                    // hbase字段
+                    if (result == null) {
+                      "null"
+                    } else {
+                      new String(result.getValue(family.getBytes(), colname.getBytes()))
+                    }
+                  } else {
+                    tp.dataType.typeName
+                    row.get(index)
+                  }
+              }
+            Row.fromSeq(newR)
+          }
+        }
+        .toIterator
+    })(RowEncoder(newSchame))
 
   }
+
 }

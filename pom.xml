@@ -26,10 +26,27 @@
         <scala.version>2.12.8</scala.version>
         <scala.compat.version>2.12</scala.compat.version>
         <antlr4.version>4.7.1</antlr4.version>
+        <hbase.version>1.2.0</hbase.version>
+
     </properties>
     <dependencyManagement>
 
         <dependencies>
+            <dependency>
+                <groupId>org.apache.hbase</groupId>
+                <artifactId>hbase-client</artifactId>
+                <version>${hbase.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>io.netty</groupId>
+                        <artifactId>netty-all</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-common</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
             <!-- 解决 java.lang.ArrayIndexOutOfBoundsException: 10582 问题-->
             <dependency>
                 <groupId>com.thoughtworks.paranamer</groupId>
