@@ -22,8 +22,14 @@ import org.apache.spark.sql.types.{StringType, StructField, StructType}
 
 import scala.collection.mutable.ArrayBuffer
 
-class SparksqlEngine(spark: SparkSession) {
+private class SparksqlEngine(spark: SparkSession) {
   import spark.implicits._
+
+  /**
+   * 执行sql，
+   * @param sqltext
+   * @return
+   */
   def sql(sqltext: String): DataFrame = {
     try {
       visit(sqltext) match {
@@ -129,5 +135,14 @@ class SparksqlEngine(spark: SparkSession) {
         .toIterator
     })(RowEncoder(newSchame))
 
+  }
+}
+
+object SparksqlEngine{
+  var engine: SparksqlEngine = null
+  def apply(spark: SparkSession): SparksqlEngine = {
+    if(engine == null)
+      engine = new SparksqlEngine(spark)
+    engine
   }
 }

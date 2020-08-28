@@ -12,7 +12,7 @@ import org.apache.spark.sql.{Row}
 class App extends SparkFunSuite with ParamFunSuite {
 
   import spark.implicits._
-  val sparkEngine = new SparksqlEngine(spark)
+  val sparkEngine = SparksqlEngine(spark)
 
 
   /**
