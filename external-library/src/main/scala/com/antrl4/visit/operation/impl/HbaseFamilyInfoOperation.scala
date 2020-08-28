@@ -11,15 +11,15 @@ case class HbaseSearchInfoOperation(
                                      tableName: String,
                                      key: String,
                                      familyColumns: Seq[HbaseFamilyColumnsInfoOperation])
-  extends AbstractVisitOperation {}
+  extends AnyRef {}
 
 case class HbaseFamilyColumnsInfoOperation(
                                             familyName: String,
                                             columns: Seq[HbaseColumnsInfoOperation])
-  extends AbstractVisitOperation {}
+  extends AnyRef {}
 
 case class HbaseColumnsInfoOperation(colName: String, colType: String)
-  extends AbstractVisitOperation {}
+  extends AnyRef {}
 // ----------------------------------------------------------------------
 
 /**
@@ -35,8 +35,8 @@ case class HbaseJoinInfoOperation(cols: Seq[HbaseJoincolumn],
                                   hbasetable: String,
                                   joinkey: String,
                                   zk: String)
-  extends AbstractVisitOperation
+  extends AnyRef
 case class HbaseJoincolumn(family: String, colname: String)
-  extends AbstractVisitOperation
+  extends AnyRef
 
 // -------------------------------------------------------------

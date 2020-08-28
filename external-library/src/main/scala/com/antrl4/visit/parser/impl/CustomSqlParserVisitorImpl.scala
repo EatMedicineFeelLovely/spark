@@ -5,17 +5,17 @@ import com.antrl4.visit.operation.impl._
 import scala.collection.JavaConverters._
 
 class CustomSqlParserVisitorImpl
-    extends CustomSqlParserBaseVisitor[AbstractVisitOperation] {
+    extends CustomSqlParserBaseVisitor[AnyRef] {
 
   override def visitHelloWordStatement(
       ctx: CustomSqlParserParser.HelloWordStatementContext)
-    : AbstractVisitOperation = {
+    : AnyRef = {
     HelloWordVisitOperation(ctx.word.getText)
   }
 
   override def visitCheckpointStatement(
       ctx: CustomSqlParserParser.CheckpointStatementContext)
-    : AbstractVisitOperation = {
+    : AnyRef = {
     CheckpointVisitOperation(ctx.table.getText, ctx.location.getText)
   }
 
@@ -25,12 +25,12 @@ class CustomSqlParserVisitorImpl
     * @param ctx the parse tree
    **/
   override def visitCheckpoint(
-      ctx: CustomSqlParserParser.CheckpointContext): AbstractVisitOperation = {
+      ctx: CustomSqlParserParser.CheckpointContext): AnyRef = {
     visitCheckpointStatement(ctx.checkpointStatement())
   }
 
   override def visitHelloWord(
-      ctx: CustomSqlParserParser.HelloWordContext): AbstractVisitOperation = {
+      ctx: CustomSqlParserParser.HelloWordContext): AnyRef = {
     visitHelloWordStatement(ctx.helloWordStatement())
   }
 
@@ -39,7 +39,7 @@ class CustomSqlParserVisitorImpl
     * @param ctx the parse tree
    **/
   override def visitSelectHbase(
-      ctx: CustomSqlParserParser.SelectHbaseContext): AbstractVisitOperation = {
+      ctx: CustomSqlParserParser.SelectHbaseContext): AnyRef = {
     val hbaseInfo = ctx.hBaseSearchState()
     val familyInfos = hbaseInfo.familyColumns.asScala.map(family => {
       val columnsInfo = family.columns.asScala.map(colms => {
@@ -57,7 +57,7 @@ class CustomSqlParserVisitorImpl
     * @param ctx the parse tree
    **/
   override def visitHbaseJoin(
-      ctx: CustomSqlParserParser.HbaseJoinContext): AbstractVisitOperation = {
+      ctx: CustomSqlParserParser.HbaseJoinContext): AnyRef = {
     val hbasestate = ctx.hbaseJoinState()
     val cols = hbasestate.cols.asScala.map(x => {
       if (x.family == null)

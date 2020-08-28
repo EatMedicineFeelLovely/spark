@@ -10,7 +10,7 @@ ON : 'on'| 'ON' ;
 WHERE : 'WHERE'|'where';
 PRT: 'PRINT'| 'print';
 INTO: 'into' | 'INTO';
-// 定义关键词的
+// 定义关键词的w
 WS : [ \t\r\n]+ -> skip;
 IDENTIFIER
         : (LETTER | DIGIT | '_' | ':')+
