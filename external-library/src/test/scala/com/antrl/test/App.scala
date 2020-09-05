@@ -130,8 +130,12 @@ class App extends SparkFunSuite with ParamFunSuite {
       val gets = list.map { x =>
         x.get(indexHbaseRowkey).toString
       }
+      // hbase get
 
-      gets.zip(list)
+      gets.zip(list).foreach{
+        case(res, row) =>
+
+      }
 
 
 
