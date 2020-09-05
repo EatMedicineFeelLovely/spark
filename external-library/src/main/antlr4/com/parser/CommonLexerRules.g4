@@ -1,4 +1,11 @@
 lexer grammar CommonLexerRules;
+CREATE : 'create' | 'CREATE';
+TABLE : 'table' | 'TABLE';
+OR : 'or' | 'OR';
+REPLACE : 'REPLACE' | 'replace';
+TEMPORARY : 'TEMPORARY' | 'temporary';
+VIEW : 'VIEW' | 'view';
+AS: 'as' | 'AS';
 CHECKPOINT:'checkpoint' | 'CHECKPOINT';
 CONF : 'conf' | 'CONF';
 ZK : 'zk' | 'ZK';
@@ -10,7 +17,7 @@ ON : 'on'| 'ON' ;
 WHERE : 'WHERE'|'where';
 PRT: 'PRINT'| 'print';
 INTO: 'into' | 'INTO';
-// 定义关键词的
+// 定义关键词的w
 WS : [ \t\r\n]+ -> skip;
 IDENTIFIER
         : (LETTER | DIGIT | '_' | ':')+
