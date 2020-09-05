@@ -97,22 +97,21 @@ class CustomSqlParserVisitorImpl extends CustomSqlParserBaseVisitor[AnyRef] {
     val tb = hbasestate.createTableDefineState()
     val newtablename = if (tb == null) "" else tb.newtablename.getText
     val cols = hbasestate.cols.asScala.map(x => {
-      val columsState = x.columnDefineState
       if (x.udfname == null) {
-        if (columsState.family == null) {
+        if (x.cols.family == null) {
           ColumnsVisitOperationFactory
             .ColumnsWithUdfInfoOperation(
               null,
               null,
-              ColumnsInfoOperation(columsState.colname.getText, null))
+              ColumnsInfoOperation(x.cols.colname.getText, null))
         } else {
           ColumnsVisitOperationFactory
             .ColumnsWithUdfInfoOperation(
               null,
               null,
-              ColumnsInfoOperation(columsState.colname.getText,
+              ColumnsInfoOperation(x.cols.colname.getText,
                                    null,
-                                   columsState.family.getText))
+                x.cols.family.getText))
         }
 
       } else {
