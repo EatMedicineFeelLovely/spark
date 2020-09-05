@@ -7,6 +7,7 @@ customcal
 | checkpointStatement EOF #checkpoint
 | hBaseSearchState EOF #selectHbase
 | hbaseJoinState EOF #hbaseJoin
+| udfFunctionStateTest EOF #udfstate
 ;
 
 // helloWordStatement
@@ -16,14 +17,10 @@ helloWordStatement
 
 // chckpoint 表数据到某hdfs路径。将spark里面的 view表存到hdfs
 checkpointStatement
-:CHECKPOINT table=tableIdentifier INTO location=STRING
+:CHECKPOINT table=tableNameDefineState INTO location=STRING
 ;
 
 
-tableIdentifier
-    : (db=IDENTIFIER '.')? table=IDENTIFIER
-    | (db=IDENTIFIER ':')? table=IDENTIFIER
-    ;
 
 // 有多个 familyColumns 。  familyColumns里面的 familys 由多个 hBaseFamilyState
 hBaseSearchState
@@ -34,35 +31,47 @@ hBaseSearchState
 // +=  +表示匹配一次或多次，  = 表示赋值
 // info (name1 string, name2 string)
 hBaseFamilyState
-    : familyName=IDENTIFIER '(' columns+=columnDefineState (',' columns+=columnDefineState)* ')'
+    : familyName=IDENTIFIER '(' columns+=columnAndTypeDefineState (',' columns+=columnAndTypeDefineState)* ')'
     ;
 
-columnDefineState
-    : colName=IDENTIFIER colType=IDENTIFIER
-    ;
+
 
 
 // 这里要携程 (',' cols+=hbaseJoincolumn) 而不能是 (',' hbaseJoincolumn)，否则cols拿不到完整的
 hbaseJoinState
-: SELECT cols+=hbaseJoincolumn (',' cols+=hbaseJoincolumn)* FROM tablename=tableIdentifier JOIN hbasetable=tableIdentifier ON
- ROWKEY '=' joinkey=hbaseJoincolumn  CONF ZK '=' zk=STRING;
+: (tb=createTableDefineState)? SELECT cols+=columnUdfState (',' cols+=columnUdfState)* FROM tablename=tableNameDefineState JOIN hbasetable=tableNameDefineState ON
+ ROWKEY '=' joinkey=columnUdfState  CONF ZK '=' zk=STRING;
 
-hbaseJoincolumn: (family=IDENTIFIER '.')? colname=IDENTIFIER
+// udf test
+udfFunctionStateTest:
+SELECT cols+=columnUdfState (',' cols+=columnUdfState)* FROM tablename=tableNameDefineState
 ;
 
 
-//
-//CHECKPOINT:'checkpoint' | 'CHECKPOINT';
-//CONF : 'conf' | 'CONF';
-//ZK : 'zk' | 'ZK';
-//ROWKEY : 'rowkey' | 'ROWKEY';
-//JOIN: 'join'| 'JOIN';
-//SELECT : 'select'| 'SELECT';
-//FROM : 'from'| 'FROM';
-//ON : 'on'| 'ON' ;
-//WHERE : 'WHERE'|'where';
-//PRT: 'PRINT'| 'print';
-//INTO: 'into' | 'INTO';
+// -----------------------------------------------------------------------
+// udf方法定义
+columnUdfState:
+| udfname=IDENTIFIER '(' (paramcols+=columnDefineState (',' paramcols+=columnDefineState)*)? ')' AS newColsName=columnDefineState
+| cols=columnDefineState
+;
 
 
+// 字段和字段类型定义；用于建表
+columnAndTypeDefineState
+    : colName=IDENTIFIER colType=IDENTIFIER
+    ;
+    
+// 字段定义  
+columnDefineState: (family=IDENTIFIER '.')?  colname=IDENTIFIER
+;
+
+// 建表前缀
+createTableDefineState:
+CREATE OR REPLACE TEMPORARY VIEW newtablename=tableNameDefineState AS;
+
+// 表名定义
+tableNameDefineState
+    : (db=IDENTIFIER '.')? table=IDENTIFIER
+    | (db=IDENTIFIER ':')? table=IDENTIFIER
+    ;
 

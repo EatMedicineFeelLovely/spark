@@ -1,4 +1,11 @@
 lexer grammar CommonLexerRules;
+CREATE : 'create' | 'CREATE';
+TABLE : 'table' | 'TABLE';
+OR : 'or' | 'OR';
+REPLACE : 'REPLACE' | 'replace';
+TEMPORARY : 'TEMPORARY' | 'temporary';
+VIEW : 'VIEW' | 'view';
+AS: 'as' | 'AS';
 CHECKPOINT:'checkpoint' | 'CHECKPOINT';
 CONF : 'conf' | 'CONF';
 ZK : 'zk' | 'ZK';
