@@ -1,7 +1,8 @@
 package com.spark.sql.execution.impl
 
-import com.antrl4.visit.operation.impl.ColumnsVisitOperationFactory.ColumnsWithUdfInfoOperation
-import com.spark.sql.engine.common.{ColumnWithUdfAndRowIndexInfo, UserDefinedFunction2}
+import com.antrl4.visit.operation.impl.ColumnsVisitOperationFactory._
+import com.spark.sql.engine.common.UserDefinedFunction2
+import org.apache.hadoop.hbase.client.Result
 import org.apache.spark.sql.{Dataset, Row}
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.types.{StringType, StructField}
@@ -34,48 +35,76 @@ trait AbstractExecution {
    * @param udfManager
    * @return
    */
-  def getNewSchame(columnsInfo: Seq[ColumnsWithUdfInfoOperation],
+  def getNewSchame(columnsInfo: Seq[ColumnsInfo],
                    schameMap: Map[String, (Int, StructField)])(
                     udfManager: mutable.HashMap[String, UserDefinedFunction2])
-  : ArrayBuffer[ColumnWithUdfAndRowIndexInfo] = {
-    val newSchameMap = new ArrayBuffer[ColumnWithUdfAndRowIndexInfo]()
-    columnsInfo.foreach(r => {
-      val newColInfo = r.newColsName
-      if (r.udfName == null || r.udfName.isEmpty) {
-        if (newColInfo.family == null
-          || newColInfo.family.equals("null")
-          || newColInfo.family.isEmpty) {
-          val (index, tp) = schameMap(newColInfo.colName)
-          newSchameMap.+=(
-            ColumnWithUdfAndRowIndexInfo(null, r, index, tp))
+  : ArrayBuffer[ColumnsInfo] = {
+    val newSchameMap = new ArrayBuffer[ColumnsInfo]()
+    columnsInfo.foreach(col => {
+      val asColName = col.colName
+      val udfInfo = col.udfInfo
+      val tansColInfo =
+      // 无udf
+      if (udfInfo == null || udfInfo.udfName.isEmpty) {
+        if (col.colName.family == null) {
+          val (index, tp) = schameMap(asColName.toString)
+            col.copy(colSchameInfo = col.colSchameInfo.copy(rowIndex = index, structType = tp))
         } else {
-          newSchameMap.+=(
-            ColumnWithUdfAndRowIndexInfo(null, r, -1,
-              StructField(newColInfo.family + "." + newColInfo.colName,
-                StringType)))
+            col.copy(colSchameInfo = col.colSchameInfo.copy(structType = StructField(asColName.toString,
+              StringType)))
         }
       } else {
-        val udff = udfManager.get(r.udfName).get
-        val paramColInfo =
-          r.paramCols.map(x => {
-            if (x.family == null
-              || x.family.equals("null")
-              || x.family.isEmpty) {
-              x.copy(index = schameMap(x.colName)._1)
-            } else
-            x.copy(index = -1)
-          }
-          )
-        newSchameMap.+=(
-          ColumnWithUdfAndRowIndexInfo(udff,
-            r.copy(paramCols = paramColInfo),
-            -1,
-            StructField(r.newColsName.colName,
-              udff.dataType)))
+        val userDefinedFunc = udfManager.get(udfInfo.udfName).get
+        val paramColInfo = getNewSchame(col.udfInfo.paramCols, schameMap)(udfManager)
+        if(userDefinedFunc.inputParamsNum != paramColInfo.size)
+          throw new Exception(
+            s"org.apache.spark.sql.AnalysisException: " +
+              s"Invalid number of arguments for function ${col.udfInfo.udfName}. Expected: ${userDefinedFunc.inputParamsNum}; Found: ${paramColInfo.size}")
+        col.copy(
+          udfInfo = col.udfInfo.copy(paramCols = paramColInfo, userDefinedFunc = userDefinedFunc),
+          colSchameInfo = col.colSchameInfo.copy(structType = StructField(asColName.toString,
+            userDefinedFunc.dataType)))
       }
+      newSchameMap.+=(tansColInfo)
     })
     newSchameMap
   }
 
+
+  /**
+   *
+   * @param colInfo
+   * @param row
+   */
+  def execUdf(colInfo: ColumnsInfo, row: Row, result: Result): Any ={
+    val colSchameInfo = colInfo.colSchameInfo
+    val colName = colInfo.colName
+    val colUdfInfo = colInfo.udfInfo
+    if (colSchameInfo.rowIndex >= 0) {
+      row.get(colSchameInfo.rowIndex)
+    } else {
+      if(colName.family != null) { // 因为是从hbase取数导致的index 未知（-1）
+        if(result!=null && result.containsColumn(colName.family.getBytes(), colName.colName.getBytes()))
+        new String(result.getValue(colName.family.getBytes(), colName.colName.getBytes()))
+        else "null"
+      } else { // 否则是因为udf导致的
+        val parmsValue = colUdfInfo.paramCols.map{x =>
+          execUdf(x, row, result)
+        }
+        colUdfInfo.userDefinedFunc.inputParamsNum match {
+          case 1 =>
+            val func = colUdfInfo.userDefinedFunc.f.asInstanceOf[
+              Function1[Any, colUdfInfo.userDefinedFunc.dataType.type]]
+            func(parmsValue.head)
+          case 2 =>
+            val func = colUdfInfo.userDefinedFunc.f.asInstanceOf[
+              Function2[Any, Any, colUdfInfo.userDefinedFunc.dataType.type]]
+            func(parmsValue(0), parmsValue(1))
+          case _ => throw new Exception("hhhh")
+        }
+      }
+    }
+
+  }
 
 }
