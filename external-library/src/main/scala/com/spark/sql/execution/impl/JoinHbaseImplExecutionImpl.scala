@@ -1,6 +1,7 @@
 package com.spark.sql.execution.impl
 
 import com.antrl4.visit.operation.impl.TableInfoVisitOperationFactory.TableJoinHbaseInfoOperation
+import com.spark.sql.engine.common.UserDefinedFunction2
 import org.apache.hadoop.hbase.client.Result
 import org.apache.spark.sql.{DataFrame, Dataset, Row}
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
@@ -13,7 +14,7 @@ import scala.collection.mutable.ArrayBuffer
 case class JoinHbaseImplExecutionImpl(
     df: Dataset[Row],
     d: TableJoinHbaseInfoOperation,
-    udfManager: mutable.HashMap[String, UserDefinedFunction])
+    udfManager: mutable.HashMap[String, UserDefinedFunction2])
     extends AbstractExecution {
 
   def exec(): DataFrame = {

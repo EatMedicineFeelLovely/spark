@@ -12,25 +12,27 @@ class SparkSQLUdfTest extends SparkFunSuite with ParamFunSuite {
    *
    */
   test("udfTest") {
-    val udff = spark.udf.register("testUdf", (a: String) => { Array(a) })
+    val udff = spark.udf.register("testUdf", (a: AnyRef, b: Any) => { "" })
     val schame = new StructType()
       .add("word", "string")
       .add("count", "int")
     val df = spark.createDataset(Seq(Row("word1", 1), Row("word2", 2)))(
       RowEncoder(schame))
     df.createOrReplaceTempView("lefttable")
-    // spark.sql(s"""select testUdf(word) from lefttable""").show
+    spark.sql(s"""select testUdf(word, word) from lefttable""").show
+    println(udff.inputTypes.size)
+    println(udff.inputTypes)
         val ff =
           udff.inputTypes.size match {
             case 1 => udff.f.asInstanceOf[Function1[Any, udff.dataType.type ]]
           }
 
-    spark.table("lefttable").mapPartitions(x => {
-      x.map(r => {
-        Row(ff(r.get(0)+":hello"))
-      })
-    })(RowEncoder(StructType(Array(StructField("b", udff.dataType)))))
-      .show
+//    spark.table("lefttable").mapPartitions(x => {
+//      x.map(r => {
+//        Row(ff(r.get(0)+":hello"))
+//      })
+//    })(RowEncoder(StructType(Array(StructField("b", udff.dataType)))))
+//      .show
 
 //    val ff =
 //      udff.inputTypes.size match {

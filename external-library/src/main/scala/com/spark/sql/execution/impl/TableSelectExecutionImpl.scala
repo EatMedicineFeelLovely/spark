@@ -2,6 +2,7 @@ package com.spark.sql.execution.impl
 
 import com.antrl4.visit.operation.impl.ColumnsVisitOperationFactory.ColumnsWithUdfInfoOperation
 import com.antrl4.visit.operation.impl.TableInfoVisitOperationFactory.TableSelectInfoOperation
+import com.spark.sql.engine.common.UserDefinedFunction2
 import org.apache.spark.sql.{DataFrame, Dataset, Row}
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.expressions.UserDefinedFunction
@@ -13,7 +14,7 @@ import scala.collection.mutable.ArrayBuffer
 case class TableSelectExecutionImpl(
     df: Dataset[Row],
     info: TableSelectInfoOperation,
-    udfManager: mutable.HashMap[String, UserDefinedFunction])
+    udfManager: mutable.HashMap[String, UserDefinedFunction2])
     extends AbstractExecution {
 
   def exec(): DataFrame = {
@@ -27,16 +28,22 @@ case class TableSelectExecutionImpl(
             if (colInfo.rowIndex >= 0) {
               r.get(colInfo.rowIndex)
             } else {
-              val ff =
-                colInfo.userDefinedFunc.inputTypes.size match {
-                  case 1 =>
-                    colInfo.userDefinedFunc.f.asInstanceOf[
-                      Function1[Any, colInfo.userDefinedFunc.dataType.type]]
-                }
               val udfParamV =
                 colInfo.columnInfo.paramCols.map(x =>
                   r.get(schameMp(x.colName)._1))
-              ff(udfParamV.head)
+                colInfo.userDefinedFunc.inputParamsNum match {
+                  case 1 =>
+                    val func = colInfo.userDefinedFunc.f.asInstanceOf[
+                      Function1[Any, colInfo.userDefinedFunc.dataType.type]]
+                    func(udfParamV.head)
+                  case 2 =>
+                    val func = colInfo.userDefinedFunc.f.asInstanceOf[
+                      Function2[Any, Any, colInfo.userDefinedFunc.dataType.type]]
+                    func(udfParamV(0), udfParamV(1))
+                  case _ => throw new Exception("hhhh")
+                }
+
+
             }
         })
       })

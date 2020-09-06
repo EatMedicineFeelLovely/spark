@@ -54,10 +54,12 @@ class App extends SparkFunSuite with ParamFunSuite {
     val df = spark.createDataset(Seq(Row("word1", 1), Row("word2", 2)))(
       RowEncoder(schame))
     df.createOrReplaceTempView("lefttable")
+    sparkEngine.register("testudf", (a: String) => {a + ": UDF :RES"})
+
     sparkEngine
       .sql(
         s"""CREATE OR REPLACE TEMPORARY VIEW wordcountJoinHbaseTable AS
-         | select word,count,info.ac FROM lefttable JOIN default:hbasetable
+         | select word,count,testudf(info.ac) as cc FROM lefttable JOIN default:hbasetable
          |ON ROWKEY = word
          |CONF ZK = 'localhost:2181'""".stripMargin
       )
@@ -65,7 +67,7 @@ class App extends SparkFunSuite with ParamFunSuite {
 
     sparkEngine
       .sql(
-        "select word,count,info.ac FROM lefttable JOIN default:hbasetable" +
+        "select testudf(word) as tt,count,testudf(info.ac) as ff FROM lefttable JOIN default:hbasetable" +
           " ON ROWKEY = word" +
           " CONF ZK = 'localhost:2181'")
       .show
@@ -73,15 +75,23 @@ class App extends SparkFunSuite with ParamFunSuite {
   }
 
   test("udf test") {
+    def f(a: Any) = { a + ": UDF"}
+    def f2(a: Any, b: Any) = { a + " : " + b}
+
     val schame = new StructType()
       .add("word", "string")
       .add("count", "int")
     val df = spark.createDataset(Seq(Row("word1", 1), Row("word2", 2)))(
       RowEncoder(schame))
     df.createOrReplaceTempView("lefttable")
-    sparkEngine.register("testudf", (a: String) => {a + "ss"})
-    sparkEngine.sql(s"""select testudf(word) as ne, count from lefttable""").show
+    sparkEngine.register("testudf", f _)
+    sparkEngine.register("testudf2", f2 _)
+
+    spark.sql(s"select testudf(word) as a, testudf2(word, count) as a2 from lefttable").show
+
+    sparkEngine.sql(s"""select testudf(word) as ne, testudf2(word, count) as ll  from lefttable""").show()
 
   }
+
 
 }
