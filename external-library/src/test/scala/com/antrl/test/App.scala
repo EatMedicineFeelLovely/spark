@@ -59,7 +59,7 @@ class App extends SparkFunSuite with ParamFunSuite {
     sparkEngine
       .sql(
         s"""CREATE OR REPLACE TEMPORARY VIEW wordcountJoinHbaseTable AS
-         | select word,count,testudf(info.ac) as cc FROM lefttable JOIN default:hbasetable
+         | select word,count,testudf(info.ac) FROM lefttable JOIN default:hbasetable
          |ON ROWKEY = word
          |CONF ZK = 'localhost:2181'""".stripMargin
       )
@@ -67,7 +67,7 @@ class App extends SparkFunSuite with ParamFunSuite {
 
     sparkEngine
       .sql(
-        "select testudf(word) as tt,count,testudf(info.ac) as ff FROM lefttable JOIN default:hbasetable" +
+        "select testudf(word) as tt,count,testudf(info.ac) FROM lefttable JOIN default:hbasetable" +
           " ON ROWKEY = word" +
           " CONF ZK = 'localhost:2181'")
       .show
@@ -87,9 +87,9 @@ class App extends SparkFunSuite with ParamFunSuite {
     sparkEngine.register("testudf", f _)
     sparkEngine.register("testudf2", f2 _)
 
-    spark.sql(s"select testudf(word) as a, testudf2(word, count) as a2 from lefttable").show
+    //spark.sql(s"select testudf(testudf(testudf(word))) as a, testudf2(word, count) as a2 from lefttable").show
 
-    sparkEngine.sql(s"""select testudf(word) as ne, testudf2(word, count) as ll  from lefttable""").show()
+    sparkEngine.sql(s"""select testudf(testudf(testudf(word))), testudf2(word, count)  from lefttable""").show()
 
   }
 
