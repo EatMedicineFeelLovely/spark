@@ -1,7 +1,5 @@
 package com.antrl4.visit.operation.impl
 
-import com.antrl4.visit.operation.impl.ColumnsVisitOperationFactory.ColumnsWithUdfInfoOperation
-
 /**
   * 查询hbase的
  *
