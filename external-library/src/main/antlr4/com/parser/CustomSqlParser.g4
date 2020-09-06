@@ -49,10 +49,10 @@ SELECT cols+=columnUdfState (',' cols+=columnUdfState)* FROM tablename=tableName
 
 
 // -----------------------------------------------------------------------
-// udf方法定义
+// udf方法定义. 支持 udf多嵌套
 columnUdfState:
-| udfname=IDENTIFIER '(' (paramcols+=columnDefineState (',' paramcols+=columnDefineState)*)? ')' AS newColsName=columnDefineState
-| cols=columnDefineState
+| udfname=IDENTIFIER '(' (paramcols+=columnUdfState (',' paramcols+=columnUdfState)*)? ')' (AS asColName=columnDefineState)?
+| col=columnDefineState
 ;
 
 
@@ -67,7 +67,7 @@ columnDefineState: (family=IDENTIFIER '.')?  colname=IDENTIFIER
 
 // 建表前缀
 createTableDefineState:
-CREATE OR REPLACE TEMPORARY VIEW newtablename=tableNameDefineState AS;
+CREATE OR REPLACE TEMPORARY VIEW createTablename=tableNameDefineState AS;
 
 // 表名定义
 tableNameDefineState
