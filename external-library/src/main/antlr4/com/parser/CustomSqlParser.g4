@@ -8,6 +8,7 @@ customcal
 | hBaseSearchState EOF #selectHbase
 | hbaseJoinState EOF #hbaseJoin
 | udfFunctionStateTest EOF #udfstate
+| dataframCollectState EOF #collectState
 ;
 
 // helloWordStatement
@@ -20,6 +21,9 @@ checkpointStatement
 :CHECKPOINT table=tableNameDefineState INTO location=STRING
 ;
 
+dataframCollectState:
+paramName=IDENTIFIER '=' tableName=IDENTIFIER '.' actionName=IDENTIFIER
+;
 
 
 // 有多个 familyColumns 。  familyColumns里面的 familys 由多个 hBaseFamilyState

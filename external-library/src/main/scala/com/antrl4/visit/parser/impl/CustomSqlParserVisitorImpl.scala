@@ -3,7 +3,7 @@ package com.antrl4.visit.parser.impl
 import com.antlr4.parser.{CustomSqlParserBaseVisitor, CustomSqlParserParser}
 import com.antrl4.visit.operation.impl._
 import com.antrl4.visit.operation.impl.ColumnsVisitOperationFactory._
-import com.antrl4.visit.operation.impl.TableInfoVisitOperationFactory.{TableJoinHbaseInfoOperation, TableSelectInfoOperation}
+import com.antrl4.visit.operation.impl.TableInfoVisitOperationFactory.{DatasetCollectInfoOperation, TableJoinHbaseInfoOperation, TableSelectInfoOperation}
 
 import scala.collection.JavaConverters._
 
@@ -82,4 +82,16 @@ class CustomSqlParserVisitorImpl extends CustomSqlParserBaseVisitor[AnyRef] {
                                 hbasestate.zk.getText)
   }
 
+  /**
+   *
+   * @param ctx the parse tree
+   *    */
+  override def visitCollectState(ctx: CustomSqlParserParser.CollectStateContext): AnyRef = {
+
+      val dfCountState = ctx.dataframCollectState()
+      val paramName = dfCountState.paramName.getText
+      val tableName = dfCountState.tableName.getText
+      val actionName = dfCountState.actionName.getText
+    DatasetCollectInfoOperation(paramName, tableName, actionName)
+  }
 }

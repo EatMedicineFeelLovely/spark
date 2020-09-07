@@ -17,4 +17,6 @@ object TableInfoVisitOperationFactory {
       joinkey: String,
       zk: String)
       extends AnyRef
+  case class DatasetCollectInfoOperation(paramName: String, tableName: String, actionName: String)
+  extends AnyRef
 }
