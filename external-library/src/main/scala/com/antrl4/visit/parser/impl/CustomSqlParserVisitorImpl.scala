@@ -87,7 +87,6 @@ class CustomSqlParserVisitorImpl extends CustomSqlParserBaseVisitor[AnyRef] {
    * @param ctx the parse tree
    *    */
   override def visitCollectState(ctx: CustomSqlParserParser.CollectStateContext): AnyRef = {
-
       val dfCountState = ctx.dataframCollectState()
       val paramName = dfCountState.paramName.getText
       val tableName = dfCountState.tableName.getText

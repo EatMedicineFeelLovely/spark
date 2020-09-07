@@ -48,18 +48,22 @@ class App extends SparkFunSuite with ParamFunSuite {
     *
     */
   test("hbase join") {
+    def f(a: Any) = { a + ": UDF"}
+    def f2(a: Any, b: Any) = { a + " : " + b}
+    sparkEngine.register("testudf", f _)
+    sparkEngine.register("testudf2", f2 _)
+
     val schame = new StructType()
       .add("word", "string")
       .add("count", "int")
     val df = spark.createDataset(Seq(Row("word1", 1), Row("word2", 2)))(
       RowEncoder(schame))
     df.createOrReplaceTempView("lefttable")
-    sparkEngine.register("testudf", (a: String) => {a + ": UDF :RES"})
 
     sparkEngine
       .sql(
         s"""CREATE OR REPLACE TEMPORARY VIEW wordcountJoinHbaseTable AS
-         | select word,count,testudf(info.ac) FROM lefttable JOIN default:hbasetable
+         | select word,count,testudf(info.ac), testudf2('hello : ', word) FROM lefttable JOIN default:hbasetable
          |ON ROWKEY = word
          |CONF ZK = 'localhost:2181'""".stripMargin
       )
@@ -77,6 +81,8 @@ class App extends SparkFunSuite with ParamFunSuite {
   test("udf test") {
     def f(a: Any) = { a + ": UDF"}
     def f2(a: Any, b: Any) = { a + " : " + b}
+    sparkEngine.register("testudf", f _)
+    sparkEngine.register("testudf2", f2 _)
 
     val schame = new StructType()
       .add("word", "string")
@@ -84,12 +90,10 @@ class App extends SparkFunSuite with ParamFunSuite {
     val df = spark.createDataset(Seq(Row("word1", 1), Row("word2", 2)))(
       RowEncoder(schame))
     df.createOrReplaceTempView("lefttable")
-    sparkEngine.register("testudf", f _)
-    sparkEngine.register("testudf2", f2 _)
 
-    //spark.sql(s"select testudf(testudf(testudf(word))) as a, testudf2(word, count) as a2 from lefttable").show
+    spark.sql(s"""select testudf(testudf(testudf2('word值：', word))) as a, testudf2("word的count数： ", count), 'hhh' as cc, ''  from lefttable""").show()
 
-    sparkEngine.sql(s"""select testudf(testudf(testudf(word))), testudf2(word, count)  from lefttable""").show()
+    sparkEngine.sql(s"""select testudf(testudf(testudf2('word值：', word))) as a,testudf(count) as c, testudf2("word的count数： ", count), 'hhh' as cc, 'dddd'  from lefttable""").show()
 
   }
 

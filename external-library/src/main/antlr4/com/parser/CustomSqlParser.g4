@@ -53,10 +53,11 @@ SELECT cols+=columnUdfState (',' cols+=columnUdfState)* FROM tablename=tableName
 
 
 // -----------------------------------------------------------------------
-// udf方法定义. 支持 udf多嵌套
+// udf方法定义. 支持 udf多嵌套 . 之后支持int和Double类型
 columnUdfState:
 | udfname=IDENTIFIER '(' (paramcols+=columnUdfState (',' paramcols+=columnUdfState)*)? ')' (AS asColName=columnDefineState)?
 | col=columnDefineState
+| constantParam=(STRING|FLOAT) (AS asColName=columnDefineState)?
 ;
 
 
