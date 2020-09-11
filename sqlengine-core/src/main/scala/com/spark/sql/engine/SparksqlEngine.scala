@@ -27,7 +27,7 @@ class SparksqlEngine(override val spark: SparkSession)
       case e: Throwable =>
         // e.printStackTrace()
         println("这是一个自定义的sql语法，使用 mob sql 引擎执行")
-        mobSql(sqltext)
+        customSql(sqltext)
     }
   }
 
@@ -37,7 +37,7 @@ class SparksqlEngine(override val spark: SparkSession)
    * @param sqltext
    * @return
    */
-  def mobSql(sqltext: String): DataFrame ={
+  def customSql(sqltext: String): DataFrame ={
     visit(sqltext) match {
       case b: CheckpointVisitOperation => {
         spark.table(b.table).write.csv(b.location)

@@ -20,11 +20,9 @@ case class TableSelectExecutionImpl(
   def exec(): DataFrame = {
     val schameMp = getSchameIndexMap(df)
     val newSchameMap = getNewSchame(info.columnsInfo, schameMp)(udfManager)
-    df.mapPartitions(itor => {
-      itor.map(row => {
-        Row.fromSeq(newSchameMap.map { colInfo =>
-          execUdf(colInfo, row, null)
-        })
+    df.map(row => {
+      Row.fromSeq(newSchameMap.map { colInfo =>
+        execUdf(colInfo, row, null)
       })
     })(RowEncoder(StructType(newSchameMap.map(_.colSchameInfo.structType))))
   }
