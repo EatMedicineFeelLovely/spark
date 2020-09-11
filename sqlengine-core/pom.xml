@@ -1,0 +1,155 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>sql-engine</artifactId>
+    <groupId>com.lmq.bigdata</groupId>
+    <version>1.0.0</version>
+  </parent>
+  <artifactId>sqlengine-core</artifactId>
+
+
+  <dependencies>
+    <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr4</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr4-runtime</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.backuity.clist</groupId>
+      <artifactId>clist-core_${scala.compat.version}</artifactId>
+      <version>3.5.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.backuity.clist</groupId>
+      <artifactId>clist-macros_${scala.compat.version}</artifactId>
+      <version>3.5.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.lmq.bigdata</groupId>
+      <artifactId>sqlengine-testutil</artifactId>
+      <version>${parent.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.scala-lang/scala-compiler -->
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-compiler</artifactId>
+      <version>2.12.5</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.thoughtworks.paranamer</groupId>
+      <artifactId>paranamer</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-hive_${scala.compat.version}</artifactId>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-mllib -->
+    <dependency>
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-mllib_${scala.compat.version}</artifactId>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/com.github.scopt/scopt -->
+    <dependency>
+      <groupId>com.github.scopt</groupId>
+      <artifactId>scopt_${scala.compat.version}</artifactId>
+      <version>3.7.1</version>
+    </dependency>
+
+
+    <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>fastjson</artifactId>
+      <version>1.2.58</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-core_2.11 -->
+    <dependency>
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-core_${scala.compat.version}</artifactId>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-sql_2.11 -->
+    <dependency>
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-sql_${scala.compat.version}</artifactId>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-streaming_2.11 -->
+    <dependency>
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-streaming_${scala.compat.version}</artifactId>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-streaming-kafka-0-8_2.11 -->
+    <!--为 spark streaming 用的	 -->
+    <dependency>
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-streaming-kafka-0-10_${scala.compat.version}</artifactId>
+    </dependency>
+    <!--为 structure streaming 用的	 -->
+    <dependency>
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-sql-kafka-0-10_${scala.compat.version}</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hbase</groupId>
+      <artifactId>hbase-client</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <sourceDirectory>src/main/scala</sourceDirectory>
+    <testSourceDirectory>src/test/scala</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-maven-plugin</artifactId>
+        <version>${antlr4.version}</version>
+        <executions>
+          <execution>
+            <id>antlr</id>
+            <goals>
+              <goal>antlr4</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <sourceDirectory>${basedir}/src/main/antlr4/com/parser</sourceDirectory>
+          <outputDirectory>${project.build.directory}/generated-sources/com/antlr4/parser</outputDirectory>
+          <visitor>true</visitor>
+          <arguments>
+            <argument>-package</argument>
+            <argument>com.antlr4.parser</argument>
+          </arguments>
+        </configuration>
+      </plugin>
+      <plugin>
+        <!-- see http://davidb.github.com/scala-maven-plugin -->
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+        <version>3.3.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>testCompile</goal>
+            </goals>
+            <configuration>
+              <args>
+                <arg>-dependencyfile</arg>
+                <arg>${project.build.directory}/.scala_dependencies</arg>
+              </args>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
