@@ -8,8 +8,6 @@ VIEW : 'VIEW' | 'view';
 AS: 'as' | 'AS';
 CHECKPOINT:'checkpoint' | 'CHECKPOINT';
 CONF : 'conf' | 'CONF';
-ZK : 'zk' | 'ZK';
-ROWKEY : 'rowkey' | 'ROWKEY';
 JOIN: 'join'| 'JOIN';
 SELECT : 'select'| 'SELECT';
 FROM : 'from'| 'FROM';
@@ -17,6 +15,10 @@ ON : 'on'| 'ON' ;
 WHERE : 'WHERE'|'where';
 PRT: 'PRINT'| 'print';
 INTO: 'into' | 'INTO';
+AND: 'and'|'AND';
+NOT: 'NOT' | '!';
+DBSEPARATOR: '.';
+
 // 定义关键词的w
 WS : [ \t\r\n]+ -> skip;
 IDENTIFIER
@@ -46,4 +48,13 @@ STRING
     | '"' ( ~('"'|'\\') | ('\\' .) )* '"'
     ;
 
+
+EQ:'=='|'=';
+NSEQ: '<=>';
+NEQ : '<>';
+NEQJ: '!=';
+LT  : '<';
+LTE : '<=' | '!>';
+GT  : '>';
+GTE : '>=' | '!<';
 

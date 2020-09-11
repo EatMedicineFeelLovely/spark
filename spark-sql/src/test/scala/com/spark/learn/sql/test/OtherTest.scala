@@ -1,7 +1,7 @@
 package com.spark.learn.sql.test
 
 import com.antlr4.parser.{CustomSqlParserLexer, CustomSqlParserParser}
-import com.antrl4.visit.operation.impl.{AbstractVisitOperation, CheckpointVisitOperation}
+import com.antrl4.visit.operation.impl.TableInfoVisitOperationFactory._
 import com.antrl4.visit.parser.impl.CustomSqlParserVisitorImpl
 import com.spark.code.udt.{HyperLogLog, RegisterSet}
 import org.antlr.v4.runtime.{CharStreams, CodePointCharStream, CommonTokenStream}
@@ -12,26 +12,7 @@ import org.scalatest.{BeforeAndAfterAll, FunSuite}
 class OtherTest extends FunSuite with BeforeAndAfterAll {
   def log2m(rsd: Double): Int =
     (Math.log((1.106 / rsd) * (1.106 / rsd)) / Math.log(2)).toInt
-  /**
-   *
-   */
-  test("ckp test") {
-    val inputStream2 = CharStreams.fromString(
-      "checkpoint ab.`table` into 'hdfs:///ssxsxs/ssxxs'")
-    visit(inputStream2) match {
-      case b: CheckpointVisitOperation => println(b)
-      case _                           => println("xxx")
-    }
-  }
 
-  def visit(inputStream: CodePointCharStream): AbstractVisitOperation = {
-    val lexer = new CustomSqlParserLexer(inputStream)
-    val tokenStream = new CommonTokenStream(lexer)
-    val parser = new CustomSqlParserParser(tokenStream)
-    val state = parser.customcal()
-    val visitor = new CustomSqlParserVisitorImpl()
-    visitor.visit(state)
-  }
   /**
    *
    */
