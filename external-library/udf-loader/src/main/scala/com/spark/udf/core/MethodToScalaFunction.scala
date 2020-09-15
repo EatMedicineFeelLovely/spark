@@ -17,7 +17,7 @@ object MethodToScalaFunction {
                      paramCount: Int,
                      udfReg: UDFRegisterTrait): AnyRef = {
     lazy val classInfo =
-      UDFClassLoaderManager().registerUDF(null, udfReg).getUdfClassInfo(className)
+      UDFClassLoaderManager().getRegisterClassInfo(udfReg).get(className).get
     lazy val method = classInfo.methodMap(methodName)
     paramCount match {
       case 0 =>

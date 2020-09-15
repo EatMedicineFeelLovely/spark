@@ -1,6 +1,8 @@
 package com.spark.udf.loader
 
-import com.spark.udf.bean.{MethodInfo, UDFClassInfo}
+import java.lang.reflect.Method
+
+import com.spark.udf.bean.{MethodInfo, PreCompileInfo, UDFClassInfo}
 import com.spark.udf.core.MethodToScalaFunction
 import com.spark.udf.register.UDFRegisterTrait
 
@@ -12,19 +14,22 @@ object UrlClassLoader extends ClassLoaderTrait {
 
   /**
     * 根据给定得classname 和 func 来读取func
-    * @param udfClassFunc
+    *  @description 同一个类只加载一次
+    * @param classPathMethodName classpath，methodname
     * @return
     */
-  def classForName(
-      udfClassFunc: Array[(String, String)]): Map[String, UDFClassInfo] = {
-    udfClassFunc
-      .groupBy(_._1)
+  override def getClassInfo(
+                             classPathMethodName: Array[PreCompileInfo],
+                             methodTran: (Array[Method], Any, String) => Array[MethodInfo])
+    : Map[String, UDFClassInfo] = {
+    classPathMethodName
+      .groupBy(_.classPath)
       .filter(x => !hasLoadClass.contains(x._1))
       .map {
-        case (className, funcNamse) =>
-          val needMtd = funcNamse.map(x => (x._2 -> null)).toMap
-          hasLoadClass.put(className, true)
-          val clazz = Class.forName(className)
+        case (classPath, info) =>
+          val needMtd = info.map(x => (x.methodNames -> null)).toMap
+          hasLoadClass.put(classPath, true)
+          val clazz = Class.forName(classPath)
           val methods =
             if (needMtd.contains("_") || needMtd.contains("*")) {
               clazz.getDeclaredMethods
@@ -32,50 +37,13 @@ object UrlClassLoader extends ClassLoaderTrait {
               clazz.getDeclaredMethods.filter(m => needMtd.contains(m.getName))
             }
           // val fields = clazz.getDeclaredFields
-          className -> new UDFClassInfo(
-            className,
-            methods
-              .map(m => { m.getName -> new MethodInfo(clazz, m) })
-              .toMap)
-      }
-  }
-
-  /**
-    * 根据给定得classname 和 func 来读取func
-    * @param udfClassFunc
-    * @return
-    */
-  def classForName(udfClassFunc: Array[(String, String)],
-                   udfReg: UDFRegisterTrait): Map[String, UDFClassInfo] = {
-    udfClassFunc
-      .groupBy(_._1)
-      // .filter(x => !hasLoadClass.contains(x._1)) // 如果先做class，再做udf，会导致udf加载不了
-      .map {
-        case (className, funcNamse) =>
-          val needMtd = funcNamse.map(x => (x._2 -> null)).toMap
-          hasLoadClass.put(className, true)
-          val clazz = Class.forName(className)
-          val methods =
-            if (needMtd.contains("_") || needMtd.contains("*")) {
-              clazz.getDeclaredMethods
-            } else {
-              clazz.getDeclaredMethods.filter(m => needMtd.contains(m.getName))
-            }
-          className -> new UDFClassInfo(
-            className,
-            methods
-              .map(m => {
-                val mthName = m.getName
-                val mInfo = new MethodInfo(clazz, m)
-                mInfo.scalaMethod = MethodToScalaFunction.matchScalaFunc(className,
-                                                   mthName,
-                                                   m.getParameterCount,
-                                                   udfReg)
-                mthName -> mInfo
-              })
+          classPath -> new UDFClassInfo(
+            classPath,
+            methodTran(methods, clazz, classPath)
+              .map(x => (x.method.getName -> x))
               .toMap
           )
       }
-  }
 
+  }
 }

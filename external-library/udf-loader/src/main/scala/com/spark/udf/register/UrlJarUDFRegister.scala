@@ -1,38 +1,47 @@
 package com.spark.udf.register
 
-import com.spark.udf.bean.UDFClassInfo
-import com.spark.udf.core.UDFClassLoaderManager
-import com.spark.udf.loader.UDFClassLoader
+import java.lang.reflect.Method
+
+import com.spark.udf.bean.{MethodInfo, PreCompileInfo, UDFClassInfo}
+import com.spark.udf.core.{MethodToScalaFunction, UDFClassLoaderManager}
+import com.spark.udf.loader.UrlClassLoader
 import org.apache.spark.sql.SparkSession
 import org.slf4j.Logger
 
 /**
- *
- * @param hdsfPaths Array("file://data/dd/dd/dd/mobutils-core-v0.1.5.jar")
- * @param udfClassFunc Array(("com.test.util.DateUtils", "*"))
- */
+  *
+  * @param hdsfPaths Array("file://data/dd/dd/dd/mobutils-core-v0.1.5.jar")
+  * @param udfClassFunc Array(("com.test.util.DateUtils", "*"))
+  */
 class UrlJarUDFRegister(val hdsfPaths: Array[String],
                         val udfClassFunc: Array[(String, String)])
     extends UDFRegisterTrait {
   var loadClassNames: Set[String] = udfClassFunc.map(_._1).toSet
-
-  /**
-    * 注册class和func。返回一个 Map[className, classInfo]。会做防重复加载
-    * @param _log
-    */
-  override def register()(_log: Logger): Map[String, UDFClassInfo] = {
-    UDFClassLoaderManager.loadJarFromURL(hdsfPaths)
-    UDFClassLoader.classForName(udfClassFunc)
+  val preCompInfos = udfClassFunc.map {
+    case (classPath, methodName) =>
+      PreCompileInfo(classPath, null, methodName)
   }
 
   /**
-    * 将func注册进spark
-    * @param spark
-    * @param _log
+    * 注册class和func。返回一个 Map[className, classInfo]。会做防重复加载
     */
-  override def registerUDF(spark: SparkSession)(_log: Logger): Map[String, UDFClassInfo] = {
+//  override def register()(_log: Logger): Map[String, UDFClassInfo] = {
+//    UDFClassLoaderManager.loadJarFromURL(hdsfPaths)
+//    UrlClassLoader.classForName(udfClassFunc)
+//  }
+
+  /**
+    * 将func注册进spark
+    */
+  override def registerUDF(
+      isRegisterUdf: Boolean = true): Map[String, UDFClassInfo] = {
     UDFClassLoaderManager.loadJarFromURL(hdsfPaths)
-    UDFClassLoader.classForName(udfClassFunc, this)
+    UrlClassLoader.getClassInfo(
+      preCompInfos,
+      if (isRegisterUdf)
+        transMethodToScalaFunc(this)
+      else transMethodToInfo()
+    )
   }
 
   /**
@@ -53,4 +62,19 @@ class UrlJarUDFRegister(val hdsfPaths: Array[String],
 
   override def toString: String =
     s"""UrlJarUDFRegister : [${udfClassFunc.mkString(",")}]"""
+}
+
+object UrlJarUDFRegister {
+  def transMethodToScalaFunc(
+      u: UDFRegisterTrait): (Array[Method], Any, String) => Array[MethodInfo] =
+    (methods: Array[Method], clazz: Any, className: String) =>
+      methods
+        .map(m => {
+          val mthName = m.getName
+          val mInfo = new MethodInfo(clazz, m)
+          mInfo.scalaMethod = MethodToScalaFunction
+            .matchScalaFunc(className, mthName, m.getParameterCount, u)
+          mInfo
+        })
+
 }

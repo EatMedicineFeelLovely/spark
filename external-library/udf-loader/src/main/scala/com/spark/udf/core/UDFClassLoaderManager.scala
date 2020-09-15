@@ -57,32 +57,31 @@ object UDFClassLoaderManager {
 }
 class UDFClassLoaderManager() {
   // 防止某个类重复载入，需要做判断, className -> UDFClassInfo
-  private val udfClassInfos = new mutable.HashMap[String, UDFClassInfo]
+   val udfClassInfos = new mutable.HashMap[String, UDFClassInfo]
   // key = （className+'.'+methodName） value = MethodInfo 。 如果没用类名责为methodName
-  private val udfMethodInfos = new mutable.HashMap[String, MethodInfo]
+   val udfMethodInfos = new mutable.HashMap[String, MethodInfo]
   // 防止重复加载。
-  private val hasRegistInstans = new mutable.HashMap[UDFRegisterTrait, Boolean]
+   val hasRegistInstans = new mutable.HashMap[UDFRegisterTrait, Boolean]
 
-
-  def getUdfClassInfo(classPath: String): UDFClassInfo ={
+  def getUdfClassInfo(classPath: String): UDFClassInfo = {
     udfClassInfos(classPath)
   }
 
-  def getMethodInfo(methodPath: String): MethodInfo ={
+  def getMethodInfo(methodPath: String): MethodInfo = {
     udfMethodInfos(methodPath)
   }
+
   /**
     * 注册类
     * @param udfRegister
     */
-  def registerUDF(
-      spark: SparkSession,
-      udfRegister: UDFRegisterTrait*): UDFClassLoaderManager = {
+  def registerUDF(udfRegister: UDFRegisterTrait*)(
+      spark: SparkSession): UDFClassLoaderManager = {
     udfRegister.foreach(r => {
       r match {
         case u: UrlJarUDFRegister =>
           if (!hasRegistInstans.contains(r)) {
-            u.register()(UDFClassLoaderManager._log).foreach {
+            u.registerUDF().foreach {
               case (className, lassInfo) =>
                 udfClassInfos.put(className, lassInfo)
                 lassInfo.methodMap.foreach {
@@ -96,7 +95,7 @@ class UDFClassLoaderManager() {
               s"  this Register has registed ：  ${r}")
           }
         case dc: DynamicCompileUDFRegister =>
-          dc.registerUDF(spark)(UDFClassLoaderManager._log).foreach {
+          dc.registerUDF().foreach {
             case (className, lassInfo) =>
               udfClassInfos.put(className, lassInfo)
               lassInfo.methodMap.foreach {
@@ -128,6 +127,16 @@ class UDFClassLoaderManager() {
 
     })
     this
+  }
+
+  /**
+   * 注册类
+   * @param udfRegister
+   */
+  def getRegisterClassInfo(udfRegister: UDFRegisterTrait*): Map[String, UDFClassInfo] = {
+    udfRegister.flatMap(r => {
+        r.registerUDF(false)
+    }).toMap
   }
   /**
     * 获取某个class得所有method

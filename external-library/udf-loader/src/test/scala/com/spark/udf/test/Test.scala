@@ -23,14 +23,16 @@ class Test extends SparkFunSuite with ParamFunSuite {
        s"""import java.text.SimpleDateFormat
            import java.util.Calendar
            import org.apache.commons.lang3.time.DateFormatUtils
-              def currentTime(): String = {
-           DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss")
-           }""".stripMargin))
+           def currentTime(): String = {
+                  DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss")
+           }"""
+        .stripMargin))
 
     // val func = Array(("com.mob.mobutils.util.DateUtils", "*"))
    // val jars = Array("file://data/dd/dd/dd/mobutils-core-v0.1.5.jar")
     udfLoader
-      .registerUDF(spark, new DynamicCompileUDFRegister(codes), new DynamicCompileUDFRegister(codes))  // 多种注册方式
+      .registerUDF(new DynamicCompileUDFRegister(codes),
+        new DynamicCompileUDFRegister(codes))(spark)  // 多种注册方式
       // .getMethodInfo("defualy.currentTime")
 //    val mth = udfLoader.getUDF(s"com.mob.mobutils.util.DateUtils.getLastWeek")
 //    val r = mth.call[String]("20190101") // 作为正常func使用
@@ -69,7 +71,7 @@ class Test extends SparkFunSuite with ParamFunSuite {
                     func: Array[(String, String)]): UDFClassLoaderManager = {
     if (udfLoader == null) {
       udfLoader = UDFClassLoaderManager()
-      udfLoader.registerClass(new UrlJarUDFRegister(jars, func))
+      udfLoader.registerUDF( new UrlJarUDFRegister(jars, func))(spark)
     }
     udfLoader
   }
@@ -93,9 +95,8 @@ class Test extends SparkFunSuite with ParamFunSuite {
       "file:/D:\\workspace\\mobutilgit\\mobutils\\dist\\lib\\mobutils-core-v0.1.5.jar")
 
     UDFClassLoaderManager()
-      .registerUDF(spark,
-                   new UrlJarUDFRegister(jars, func),
-                   new DynamicCompileUDFRegister(codes))
+      .registerUDF(new UrlJarUDFRegister(jars, func),
+                   new DynamicCompileUDFRegister(codes))(spark)
     // .foreach(println)
 
     import spark.implicits._
