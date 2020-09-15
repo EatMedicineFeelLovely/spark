@@ -75,8 +75,7 @@ class UDFClassLoaderManager() {
     * 注册类
     * @param udfRegister
     */
-  def registerUDF(udfRegister: UDFRegisterTrait*)(
-      spark: SparkSession): UDFClassLoaderManager = {
+  def registerUDF(udfRegister: UDFRegisterTrait*)(spark: SparkSession): UDFClassLoaderManager = {
     udfRegister.foreach(r => {
       r match {
         case u: UrlJarUDFRegister =>
@@ -96,11 +95,11 @@ class UDFClassLoaderManager() {
           }
         case dc: DynamicCompileUDFRegister =>
           dc.registerUDF().foreach {
-            case (className, lassInfo) =>
-              udfClassInfos.put(className, lassInfo)
+            case (classPath, lassInfo) =>
+              udfClassInfos.put(classPath, lassInfo)
               lassInfo.methodMap.foreach {
                 case (mthName, mth) =>
-                  udfMethodInfos.put(s"$className.$mthName", mth)
+                  udfMethodInfos.put(s"$classPath.$mthName", mth)
                   if (spark.sessionState.functionRegistry.functionExists(
                         new FunctionIdentifier(mthName))) {
                     spark.sessionState.functionRegistry

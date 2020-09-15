@@ -31,11 +31,11 @@ class Test extends SparkFunSuite with ParamFunSuite {
     // val func = Array(("com.mob.mobutils.util.DateUtils", "*"))
    // val jars = Array("file://data/dd/dd/dd/mobutils-core-v0.1.5.jar")
     udfLoader
-      .registerUDF(new DynamicCompileUDFRegister(codes),
-        new DynamicCompileUDFRegister(codes))(spark)  // 多种注册方式
+      .registerUDF(new DynamicCompileUDFRegister(codes))(spark)  // 多种注册方式
       // .getMethodInfo("defualy.currentTime")
 //    val mth = udfLoader.getUDF(s"com.mob.mobutils.util.DateUtils.getLastWeek")
 //    val r = mth.call[String]("20190101") // 作为正常func使用
+    udfLoader.udfMethodInfos.foreach(println)
     val mth = udfLoader.getUDF(s"currentTime")
     val r = mth.call[String]()
     println(r)

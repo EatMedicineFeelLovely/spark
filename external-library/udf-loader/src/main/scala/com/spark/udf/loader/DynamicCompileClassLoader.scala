@@ -5,7 +5,6 @@ import java.lang.reflect.Method
 import com.spark.udf.bean.{MethodInfo, PreCompileInfo, UDFClassInfo}
 import com.spark.udf.core.MethodToScalaFunction
 import com.spark.udf.register.UDFRegisterTrait
-
 import scala.tools.reflect.ToolBox
 import scala.collection.immutable
 import scala.collection.mutable
@@ -78,7 +77,7 @@ object DynamicCompileClassLoader extends ClassLoaderTrait {
     : Map[String, UDFClassInfo] = {
     udfClassCodes.map {
       case (info) =>
-        hasLoadClass.put(info.compileName, true)
+        hasLoadClass.put(info.classPath, true)
         val clazz = compile(prepareScala(info.compileName, info.code))
         val methods = clazz.getDeclaredMethods
         info.classPath -> new UDFClassInfo(

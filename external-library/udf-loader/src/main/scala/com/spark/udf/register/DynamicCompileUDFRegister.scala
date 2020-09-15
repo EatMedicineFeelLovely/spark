@@ -24,8 +24,8 @@ class DynamicCompileUDFRegister(val classNameCodesStr: Array[(String, String)])
       if (className == null || className.isEmpty) {
         val fixClassname =
           s"""class_${UUID.randomUUID().toString.replaceAll("-", "")}"""
-        PreCompileInfo(fixClassname,
-          "defualt",
+        PreCompileInfo("defualt",
+          fixClassname,
           null,
          s"""class $fixClassname{
              | $code

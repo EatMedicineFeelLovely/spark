@@ -34,6 +34,12 @@ trait UDFRegisterTrait extends Serializable {
 
   override def hashCode(): Int = classHashCode
 
+
+  /**
+   * 将方法转为scala udf
+   * @param u
+   * @return
+   */
   def transMethodToScalaFunc(u: UDFRegisterTrait)
   : (Array[Method], Any, String) => Array[MethodInfo] =
     (methods: Array[Method], clazz: Any, className: String) =>
@@ -47,6 +53,10 @@ trait UDFRegisterTrait extends Serializable {
         })
 
 
+  /**
+   *
+   * @return
+   */
   def transMethodToInfo(): (Array[Method], Any, String) => Array[MethodInfo] = {
     (methods: Array[Method], clazz: Any, className: String) =>
       methods
