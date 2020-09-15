@@ -39,7 +39,7 @@ object UrlClassLoader extends ClassLoaderTrait {
           // val fields = clazz.getDeclaredFields
           classPath -> new UDFClassInfo(
             classPath,
-            methodTran(methods, clazz, classPath)
+            methodTran(methods, clazz.newInstance(), classPath)
               .map(x => (x.method.getName -> x))
               .toMap
           )

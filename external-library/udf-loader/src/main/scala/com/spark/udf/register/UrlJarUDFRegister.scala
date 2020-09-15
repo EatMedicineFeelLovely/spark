@@ -64,17 +64,3 @@ class UrlJarUDFRegister(val hdsfPaths: Array[String],
     s"""UrlJarUDFRegister : [${udfClassFunc.mkString(",")}]"""
 }
 
-object UrlJarUDFRegister {
-  def transMethodToScalaFunc(
-      u: UDFRegisterTrait): (Array[Method], Any, String) => Array[MethodInfo] =
-    (methods: Array[Method], clazz: Any, className: String) =>
-      methods
-        .map(m => {
-          val mthName = m.getName
-          val mInfo = new MethodInfo(clazz, m)
-          mInfo.scalaMethod = MethodToScalaFunction
-            .matchScalaFunc(className, mthName, m.getParameterCount, u)
-          mInfo
-        })
-
-}

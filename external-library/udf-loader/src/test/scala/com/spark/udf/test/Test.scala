@@ -37,7 +37,8 @@ class Test extends SparkFunSuite with ParamFunSuite {
 //    val r = mth.call[String]("20190101") // 作为正常func使用
     udfLoader.udfMethodInfos.foreach(println)
     val mth = udfLoader.getUDF(s"currentTime")
-    val r = mth.call[String]()
+    val r = mth.method.invoke(mth.instansClass)
+   // val r = mth.call[String]()
     println(r)
   }
 

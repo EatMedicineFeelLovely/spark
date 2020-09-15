@@ -82,7 +82,7 @@ object DynamicCompileClassLoader extends ClassLoaderTrait {
         val methods = clazz.getDeclaredMethods
         info.classPath -> new UDFClassInfo(
           info.classPath,
-          methodTran(methods, clazz, info.classPath)
+          methodTran(methods, clazz.newInstance(), info.classPath)
             .map(x => (x.method.getName -> x))
             .toMap
         )
