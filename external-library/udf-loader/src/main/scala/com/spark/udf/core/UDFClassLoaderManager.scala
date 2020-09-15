@@ -2,7 +2,7 @@ package com.spark.udf.core
 
 import java.net.{URL, URLClassLoader}
 
-import com.spark.udf.bean.{MethodInfo, UDFClassInfo, UdfInfoManager}
+import com.spark.udf.bean.{MethodInfo, UDFClassInfo}
 import com.spark.udf.register.{DynamicCompileUDFRegister, UDFRegisterTrait, UrlJarUDFRegister}
 import org.apache.hadoop.fs.FsUrlStreamHandlerFactory
 import org.apache.spark.sql.SparkSession
@@ -129,46 +129,6 @@ class UDFClassLoaderManager() {
     })
     this
   }
-
-//  def registerUDF(
-//                   spark: SparkSession,
-//                   udfRegister: UDFRegisterTrait*): mutable.HashMap[String, MethodInfo] = {
-//    udfRegister.foreach(r => {
-//      // if (!hasRegistInstans.contains(r)) {
-//      r.registerUDF(spark)(UDFClassLoaderManager._log).foreach {
-//        case (className, lassInfo) =>
-//          udfClassInfos.put(className, lassInfo)
-//          lassInfo.methodMap.foreach {
-//            case (mthName, mth) =>
-//              udfMethodInfos.put(s"$className.$mthName", mth)
-//              if (spark.sessionState.functionRegistry.functionExists(
-//                new FunctionIdentifier(mthName))) {
-//                spark.sessionState.functionRegistry
-//                  .dropFunction(new FunctionIdentifier(mthName))
-//              }
-//              val (inputTypes, returnType) = mth.getParamDTAndReturnDT
-//              spark.sessionState.functionRegistry
-//                .registerFunction(
-//                  new FunctionIdentifier(mthName),
-//                  (e: Seq[Expression]) =>
-//                    ScalaUDF(mth.scalaMethod,
-//                      returnType,
-//                      e,
-//                      inputTypes
-//                        .map(_.map(_ => true))
-//                        .getOrElse(Seq.empty[Boolean]),
-//                      inputTypes.getOrElse(Nil),
-//                      Some(mthName))
-//                )
-//          }
-//      }
-//      hasRegistInstans.put(r, true)
-//      //      } else
-//      //        UDFClassLoaderManager._log.warn(s"  this Register has registed ：  ${r}")
-//    })
-//    udfMethodInfos
-//  }
-
   /**
     * 获取某个class得所有method
     * @param className

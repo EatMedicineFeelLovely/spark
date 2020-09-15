@@ -6,7 +6,7 @@ import com.spark.udf.register.UDFRegisterTrait
 
 import scala.collection.mutable
 
-object UDFClassLoader extends ClassLoaderTrait {
+object UrlClassLoader extends ClassLoaderTrait {
   // 记录加载过得class。可能是不同的加载器，但是是同一个类名，例如两个jar冲突
   var hasLoadClass = new mutable.HashMap[String, Boolean]()
 

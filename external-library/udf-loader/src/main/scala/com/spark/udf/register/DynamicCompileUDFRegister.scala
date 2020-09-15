@@ -62,6 +62,7 @@ class DynamicCompileUDFRegister(val udfClassCodes: Array[(String, String)])
   override def classHashCode(): Int = {
     udfClassCodes.hashCode()
   }
+
   override def toString: String =
     s"""ThermalCompileUDFRegister : [${fixUdfConde
       .map(x => (x._3, x._2))
