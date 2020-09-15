@@ -17,6 +17,7 @@ class Test extends SparkFunSuite with ParamFunSuite {
     */
   test("testLocalFunc") {
     val udfLoader = UDFClassLoaderManager()
+    //className , codes
     val codes = Array(
       ("",
        s"""import java.text.SimpleDateFormat
@@ -29,7 +30,7 @@ class Test extends SparkFunSuite with ParamFunSuite {
     // val func = Array(("com.mob.mobutils.util.DateUtils", "*"))
    // val jars = Array("file://data/dd/dd/dd/mobutils-core-v0.1.5.jar")
     udfLoader
-      .registerUDF(spark, new DynamicCompileUDFRegister(codes))  // 多种注册方式
+      .registerUDF(spark, new DynamicCompileUDFRegister(codes), new DynamicCompileUDFRegister(codes))  // 多种注册方式
       // .getMethodInfo("defualy.currentTime")
 //    val mth = udfLoader.getUDF(s"com.mob.mobutils.util.DateUtils.getLastWeek")
 //    val r = mth.call[String]("20190101") // 作为正常func使用
