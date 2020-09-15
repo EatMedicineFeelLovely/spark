@@ -15,8 +15,8 @@
         <module>spark-udf</module>
         <module>spark-testutil</module>
         <module>resources</module>
+        <module>external-library/udf-loader</module>
         <module>assembly</module>
-        <module>external-library</module>
     </modules>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

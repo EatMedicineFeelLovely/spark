@@ -49,6 +49,14 @@
         </fileSet>
 
         <fileSet>
+            <directory>${project.parent.basedir}/external-library/udf-loader/target/</directory>
+            <outputDirectory>/lib</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+
+        <fileSet>
             <directory>${project.parent.basedir}/spark-sql/target/</directory>
             <outputDirectory>/lib</outputDirectory>
             <includes>

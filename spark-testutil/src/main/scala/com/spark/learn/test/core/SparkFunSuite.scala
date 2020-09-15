@@ -4,7 +4,7 @@ import org.apache.spark.sql.SparkSession
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 abstract class SparkFunSuite extends FunSuite with BeforeAndAfterAll {
-  val spark: SparkSession = SparkSession
+  lazy val spark: SparkSession = SparkSession
     .builder()
     .appName("Test")
     // .enableHiveSupport()
