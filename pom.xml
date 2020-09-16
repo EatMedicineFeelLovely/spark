@@ -16,6 +16,7 @@
         <module>spark-testutil</module>
         <module>resources</module>
         <module>external-library/udf-loader</module>
+        <module>external-library/sql-engine</module>
         <module>assembly</module>
     </modules>
     <properties>
