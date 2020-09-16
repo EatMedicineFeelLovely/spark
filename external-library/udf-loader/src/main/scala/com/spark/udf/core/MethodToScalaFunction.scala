@@ -1,30 +1,33 @@
 package com.spark.udf.core
 
+import java.util.UUID
+
+import com.spark.udf.bean.{MethodInfo, PreCompileInfo}
+import com.spark.udf.loader.{ClassLoaderTrait, DynamicCompileClassLoader}
 import com.spark.udf.register.UDFRegisterTrait
 
+import scala.collection.mutable
+
 object MethodToScalaFunction {
+  val methodInfoMap = new mutable.HashMap[String, MethodInfo]()
 
   /**
     * 匹配scala func。用于注册spark udf
     * 区里面要重新加载。所以这个方法得参数不能是Method，否则报序列话
-    * @param className
-    * @param methodName
-    * @param udfReg
+    * 必须是lazy，clazz 必须在这里创建。。。。否则code的方式报错
     * @return
     */
-  def matchScalaFunc(className: String,
+  def matchScalaFunc(preCompileInfo: PreCompileInfo,
+                     @transient classLoader: ClassLoaderTrait,
                      methodName: String,
-                     paramCount: Int,
-                     udfReg: UDFRegisterTrait): AnyRef = {
-    lazy val classInfo =
-      UDFClassLoaderManager().getRegisterClassInfo(udfReg).get(className).get
-    lazy val method = classInfo.methodMap(methodName)
+                     paramCount: Int): AnyRef = {
+    lazy val methodInfos = getMethodInfo(preCompileInfo, classLoader, methodName)
     paramCount match {
       case 0 =>
         new (() => Any) with Serializable {
           override def apply(): Any = {
             try {
-              method.call()
+              methodInfos.call()
             } catch {
               case e: Exception =>
                 e.printStackTrace()
@@ -36,7 +39,7 @@ object MethodToScalaFunction {
         new (Object => Any) with Serializable {
           override def apply(v1: Object): Any = {
             try {
-              method.call(v1)
+              methodInfos.call(v1)
             } catch {
               case e: Exception =>
                 e.printStackTrace()
@@ -48,7 +51,7 @@ object MethodToScalaFunction {
         new ((Object, Object) => Any) with Serializable {
           override def apply(v1: Object, v2: Object): Any = {
             try {
-              method.call(v1, v2)
+              methodInfos.call(v1, v2)
             } catch {
               case e: Exception =>
                 e.printStackTrace()
@@ -56,6 +59,25 @@ object MethodToScalaFunction {
             }
           }
         }
+      case _ => null
+    }
+  }
+
+  def getMethodInfo(preCompileInfo: PreCompileInfo,
+                    @transient classLoader: ClassLoaderTrait,
+                    methodName: String): MethodInfo = {
+
+    if (methodInfoMap.contains(s"${preCompileInfo.classPath}.${methodName}")) {
+      methodInfoMap(s"${preCompileInfo.classPath}.${methodName}")
+    } else {
+      val clazz = {
+        classLoader.getClassInstance(preCompileInfo)
+      }
+      val m = new MethodInfo(
+        clazz.newInstance(),
+        clazz.getDeclaredMethods.filter(_.getName == methodName).head)
+      methodInfoMap.put(s"${preCompileInfo.classPath}.${methodName}", m)
+      m
     }
   }
 }

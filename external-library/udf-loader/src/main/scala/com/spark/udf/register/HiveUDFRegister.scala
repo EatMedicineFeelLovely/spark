@@ -1,6 +1,6 @@
 package com.spark.udf.register
 
-import com.spark.udf.bean.UDFClassInfo
+import com.spark.udf.bean.{PreCompileInfo, UDFClassInfo}
 import org.apache.spark.sql.SparkSession
 import org.slf4j.Logger
 
@@ -26,7 +26,7 @@ class HiveUDFRegister(val spark: SparkSession, val jarsPath: Seq[String], val fu
   /**
    * 注册进spark
    */
-  override def registerUDF(isRegisterUdf: Boolean): Map[String, UDFClassInfo] = {
+  override def registerUDF(): Map[String, UDFClassInfo] = {
     func.foreach {
       case (funcName, funcClass) =>
         val sql = s"create temporary function $funcName as '$funcClass'"
@@ -34,4 +34,6 @@ class HiveUDFRegister(val spark: SparkSession, val jarsPath: Seq[String], val fu
     }
     null
   }
+
+  override def getClassInstance(info: PreCompileInfo): Class[_] = null
 }

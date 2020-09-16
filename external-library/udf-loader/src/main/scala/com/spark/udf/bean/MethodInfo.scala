@@ -7,7 +7,7 @@ import org.apache.spark.sql.types.DataType
 
 import scala.util.Try
 
-class MethodInfo(val instansClass: Any, val method: Method) {
+class MethodInfo(val instansClass: Any, val method: Method){
   var scalaMethod: AnyRef = null
 
   /**

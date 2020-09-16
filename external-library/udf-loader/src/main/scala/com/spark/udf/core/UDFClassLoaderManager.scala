@@ -3,7 +3,11 @@ package com.spark.udf.core
 import java.net.{URL, URLClassLoader}
 
 import com.spark.udf.bean.{MethodInfo, UDFClassInfo}
-import com.spark.udf.register.{DynamicCompileUDFRegister, UDFRegisterTrait, UrlJarUDFRegister}
+import com.spark.udf.register.{
+  DynamicCompileUDFRegister,
+  UDFRegisterTrait,
+  UrlJarUDFRegister
+}
 import org.apache.hadoop.fs.FsUrlStreamHandlerFactory
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.catalyst.FunctionIdentifier
@@ -57,11 +61,11 @@ object UDFClassLoaderManager {
 }
 class UDFClassLoaderManager() {
   // 防止某个类重复载入，需要做判断, className -> UDFClassInfo
-   val udfClassInfos = new mutable.HashMap[String, UDFClassInfo]
+  val udfClassInfos = new mutable.HashMap[String, UDFClassInfo]
   // key = （className+'.'+methodName） value = MethodInfo 。 如果没用类名责为methodName
-   val udfMethodInfos = new mutable.HashMap[String, MethodInfo]
+  val udfMethodInfos = new mutable.HashMap[String, MethodInfo]
   // 防止重复加载。
-   val hasRegistInstans = new mutable.HashMap[UDFRegisterTrait, Boolean]
+  val hasRegistInstans = new mutable.HashMap[UDFRegisterTrait, Boolean]
 
   def getUdfClassInfo(classPath: String): UDFClassInfo = {
     udfClassInfos(classPath)
@@ -75,17 +79,19 @@ class UDFClassLoaderManager() {
     * 注册类
     * @param udfRegister
     */
-  def registerUDF(udfRegister: UDFRegisterTrait*)(spark: SparkSession): UDFClassLoaderManager = {
+  def registerUDF(spark: SparkSession,
+                  udfRegister: UDFRegisterTrait*): UDFClassLoaderManager = {
     udfRegister.foreach(r => {
       r match {
         case u: UrlJarUDFRegister =>
           if (!hasRegistInstans.contains(r)) {
             u.registerUDF().foreach {
-              case (className, lassInfo) =>
-                udfClassInfos.put(className, lassInfo)
+              case (classPath, lassInfo) =>
+                udfClassInfos.put(classPath, lassInfo)
                 lassInfo.methodMap.foreach {
                   case (mthName, mtd) =>
-                    udfMethodInfos.put(s"$className.$mthName", mtd)
+                    udfMethodInfos.put(s"$classPath.$mthName", mtd)
+                    registerSparkUdf(spark, mtd)
                 }
             }
             hasRegistInstans.put(r, true)
@@ -100,49 +106,63 @@ class UDFClassLoaderManager() {
               lassInfo.methodMap.foreach {
                 case (mthName, mth) =>
                   udfMethodInfos.put(s"$classPath.$mthName", mth)
-                  if (spark.sessionState.functionRegistry.functionExists(
-                        new FunctionIdentifier(mthName))) {
-                    spark.sessionState.functionRegistry
-                      .dropFunction(new FunctionIdentifier(mthName))
-                  }
-                  val (inputTypes, returnType) = mth.getParamDTAndReturnDT
-                  spark.sessionState.functionRegistry
-                    .registerFunction(
-                      new FunctionIdentifier(mthName),
-                      (e: Seq[Expression]) =>
-                        ScalaUDF(mth.scalaMethod,
-                                 returnType,
-                                 e,
-                                 inputTypes
-                                   .map(_.map(_ => true))
-                                   .getOrElse(Seq.empty[Boolean]),
-                                 inputTypes.getOrElse(Nil),
-                                 Some(mthName))
-                    )
+                  registerSparkUdf(spark, mth)
               }
           }
           hasRegistInstans.put(r, true)
       }
-
     })
     this
   }
-
-  /**
-   * 注册类
-   * @param udfRegister
-   */
-  def getRegisterClassInfo(udfRegister: UDFRegisterTrait*): Map[String, UDFClassInfo] = {
-    udfRegister.flatMap(r => {
-        r.registerUDF(false)
-    }).toMap
-  }
+//
+//  /**
+//   * 注册类
+//   * @param udfRegister
+//   */
+//  def getRegisterClassInfo(udfRegister: UDFRegisterTrait*): Map[String, UDFClassInfo] = {
+//    udfRegister.flatMap(r => {
+//        r.registerUDF()
+//    }).toMap
+//  }
   /**
     * 获取某个class得所有method
     * @param className
     */
   def getClass(className: String): UDFClassInfo = {
     udfClassInfos(className)
+  }
+
+  /**
+    *
+    * @param spark
+    * @param mInfo
+    */
+  private def registerSparkUdf(spark: SparkSession, mInfo: MethodInfo): Unit = {
+    if (mInfo.scalaMethod != null && spark != null) {
+      val mthName = mInfo.method.getName
+      if (spark.sessionState.functionRegistry.functionExists(
+            new FunctionIdentifier(mthName))) {
+        spark.sessionState.functionRegistry
+          .dropFunction(new FunctionIdentifier(mthName))
+      }
+      val (inputTypes, returnType) = mInfo.getParamDTAndReturnDT
+      spark.sessionState.functionRegistry
+        .registerFunction(
+          new FunctionIdentifier(mthName),
+          (e: Seq[Expression]) =>
+            ScalaUDF(mInfo.scalaMethod,
+                     returnType,
+                     e,
+                     inputTypes
+                       .map(_.map(_ => true))
+                       .getOrElse(Seq.empty[Boolean]),
+                     inputTypes.getOrElse(Nil),
+                     Some(mthName))
+        )
+    } else {
+      println("scala func is Match fail" )
+    }
+
   }
 
   /**

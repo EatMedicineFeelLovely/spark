@@ -5,7 +5,7 @@ import java.util.UUID
 
 import com.spark.udf.bean.{MethodInfo, PreCompileInfo, UDFClassInfo}
 import com.spark.udf.core.MethodToScalaFunction
-import com.spark.udf.loader.DynamicCompileClassLoader
+import com.spark.udf.loader.{DynamicCompileClassLoader}
 import org.apache.spark.sql.SparkSession
 import org.slf4j.Logger
 
@@ -25,30 +25,20 @@ class DynamicCompileUDFRegister(val classNameCodesStr: Array[(String, String)])
         val fixClassname =
           s"""class_${UUID.randomUUID().toString.replaceAll("-", "")}"""
         PreCompileInfo("defualt",
-          fixClassname,
-          null,
-         s"""class $fixClassname{
+                       fixClassname,
+                       null,
+                       s"""class $fixClassname{
              | $code
              |}""".stripMargin,
-         )
+        )
       } else PreCompileInfo(className, className, null, code)
   }
-  // 不注册类暂时
-//  override def register()(_log: Logger): Map[String, UDFClassInfo] = {
-//    DynamicCompileClassLoader.loadClassForCode(fixUdfConde)
-//  }
 
   /**
     *    * @return
     */
-  override def registerUDF(
-      isRegisterUdf: Boolean = true): Map[String, UDFClassInfo] = {
-    DynamicCompileClassLoader.getClassInfo(
-      fixPrecInfos,
-      if (isRegisterUdf)
-        transMethodToScalaFunc(this)
-      else transMethodToInfo()
-    )
+  override def registerUDF(): Map[String, UDFClassInfo] = {
+    DynamicCompileClassLoader.getClassInfo( fixPrecInfos )
   }
 
   /**
@@ -70,6 +60,8 @@ class DynamicCompileUDFRegister(val classNameCodesStr: Array[(String, String)])
   override def classHashCode(): Int = {
     classNameCodesStr.hashCode()
   }
+  override def getClassInstance(info: PreCompileInfo): Class[_] =
+    DynamicCompileClassLoader.getClassInstance(info)
 
   override def toString: String =
     s"""ThermalCompileUDFRegister : [${fixPrecInfos

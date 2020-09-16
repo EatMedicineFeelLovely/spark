@@ -23,25 +23,11 @@ class UrlJarUDFRegister(val hdsfPaths: Array[String],
   }
 
   /**
-    * 注册class和func。返回一个 Map[className, classInfo]。会做防重复加载
-    */
-//  override def register()(_log: Logger): Map[String, UDFClassInfo] = {
-//    UDFClassLoaderManager.loadJarFromURL(hdsfPaths)
-//    UrlClassLoader.classForName(udfClassFunc)
-//  }
-
-  /**
     * 将func注册进spark
     */
-  override def registerUDF(
-      isRegisterUdf: Boolean = true): Map[String, UDFClassInfo] = {
+  override def registerUDF(): Map[String, UDFClassInfo] = {
     UDFClassLoaderManager.loadJarFromURL(hdsfPaths)
-    UrlClassLoader.getClassInfo(
-      preCompInfos,
-      if (isRegisterUdf)
-        transMethodToScalaFunc(this)
-      else transMethodToInfo()
-    )
+    UrlClassLoader.getClassInfo(preCompInfos)
   }
 
   /**
@@ -62,5 +48,7 @@ class UrlJarUDFRegister(val hdsfPaths: Array[String],
 
   override def toString: String =
     s"""UrlJarUDFRegister : [${udfClassFunc.mkString(",")}]"""
-}
 
+  override def getClassInstance(info: PreCompileInfo): Class[_] =
+    UrlClassLoader.getClassInstance(info)
+}
