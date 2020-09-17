@@ -98,6 +98,7 @@ class Test extends SparkFunSuite with ParamFunSuite {
     * udf
     */
   test("testDFUDF") {
+    val udfLoader = UDFClassLoaderManager()
 
     val codes = Array(
       ("",
@@ -108,21 +109,22 @@ class Test extends SparkFunSuite with ParamFunSuite {
            DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss")
            }""".stripMargin))
 
-    val func = Array(("com.mob.mobutils.util.DateUtils", "*"))
+    val func = Array(("com.spark.udf.bean.UdfLoaderJavaTest", "*"))
     val jars = Array(
-      "file:/D:\\workspace\\mobutilgit\\mobutils\\dist\\lib\\mobutils-core-v0.1.5.jar")
+      "file://Users/eminem/workspace/git_pro/spark-learn/external-library/udf-loader/target/udf-loader-2.4.0.jar")
 
-    UDFClassLoaderManager()
+    udfLoader
       .registerUDF(spark,
                    new UrlJarUDFRegister(jars, func),
                    new DynamicCompileUDFRegister(codes))
-    // .foreach(println)
+    udfLoader.udfClassInfos.foreach(println)
+    udfLoader.udfMethodInfos.foreach(println)
 
     spark.sparkContext
       .parallelize(Array("20191201", "20191101"))
       .toDF("a")
       .createOrReplaceTempView("test")
 
-    spark.sql(s"select currentTime() as A from test").show
+    spark.sql(s"select currentTime() as A, getCurrentDay() as C from test").show
   }
 }

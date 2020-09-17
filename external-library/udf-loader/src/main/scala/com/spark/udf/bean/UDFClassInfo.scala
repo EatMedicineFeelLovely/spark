@@ -17,7 +17,7 @@ class UDFClassInfo(val className: String,
   override def hashCode(): Int = className.hashCode()
 
   override def toString: String = {
-    s"""[$className: [${methodMap.map(_._1).mkString(",")}]"""
+    s"""<$className: [${methodMap.map(_._1).mkString(",")}]>"""
   }
 
 }

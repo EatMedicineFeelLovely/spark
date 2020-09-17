@@ -36,4 +36,8 @@ class MethodInfo(val instansClass: Any, val method: Method){
       .invoke(instansClass, args: _*)
       .asInstanceOf[T]
   }
+
+  override def toString: String = {
+    s"""methodName: ${method.getName}, className: ${instansClass.getClass}, scalaFunc: ${scalaMethod}"""
+  }
 }
