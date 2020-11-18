@@ -25,8 +25,8 @@ class SparkSqlCoreTest extends SparkFunSuite with ParamFunSuite {
   import spark.implicits._
 
   /**
-   *
-   */
+    *
+    */
   test("spark sql dataset") {
     // 方法1
     val df =
@@ -38,24 +38,39 @@ class SparkSqlCoreTest extends SparkFunSuite with ParamFunSuite {
   }
 
   /**
-   *
-   */
+    *
+    */
   test("读取json文件为dataset") {
-    val df = spark.read.json(
-      "/Users/eminem/workspace/git_pro/spark-learn/resources/datafile/json.log")
-    df.printSchema()
+
+    val df = spark.read
+      .schema(JSON_SCHAME)
+      .json(
+        "/Users/eminem/workspace/git_pro/spark-learn/resources/datafile/json.log")
+    df.select($"word",
+              when($"count".isNull, "0.001")
+                .otherwise($"count")
+                .cast("double")
+                .as("count"))
+      .select($"word",
+        when($"count".isNull, "0.001")
+          .otherwise($"count")
+          .as("count"))
+      .show()
+    // df.printSchema()
+    // df.show
     // df.show()
     // 将json字符串转为struct结构
-    df.withColumn("json_value",
-      from_json($"json".cast(StringType), JSON_SCHAME))
-      .show()
+
+//    df.withColumn("json_value",
+//      from_json($"json".cast(StringType), JSON_SCHAME))
+//      .show()
 
     // df.select("c.k").show
   }
 
   /**
-   *
-   */
+    *
+    */
   test("array结构字段") {
     val ds = spark.read.json(
       "/Users/eminem/workspace/git_pro/spark-learn/resources/datafile/arr_map_struc.json")
@@ -82,8 +97,8 @@ class SparkSqlCoreTest extends SparkFunSuite with ParamFunSuite {
   }
 
   /**
-   *
-   */
+    *
+    */
   test("struct结构的读取和创建") {
     val ds = spark.read.json(
       "/Users/eminem/workspace/git_pro/spark-learn/resources/datafile/arr_map_struc.json")
@@ -95,8 +110,8 @@ class SparkSqlCoreTest extends SparkFunSuite with ParamFunSuite {
   }
 
   /**
-   *
-   */
+    *
+    */
   test("map结构的读取和创建") {
     val ds = spark.read
       .json(
@@ -114,15 +129,16 @@ class SparkSqlCoreTest extends SparkFunSuite with ParamFunSuite {
   }
 
   /**
-   *
-   */
+    *
+    */
   test("spark udt 自定义 类型") {
     def log2m(rsd: Double): Int =
       (Math.log((1.106 / rsd) * (1.106 / rsd)) / Math.log(2)).toInt
 
     // 计算hyper
     val hyper_udf = (list: mutable.WrappedArray[String]) => {
-      val hyperLogLog2 = HyperLogLog2(log2m(0.05), new RegisterSet(1 << log2m(0.05)))
+      val hyperLogLog2 =
+        HyperLogLog2(log2m(0.05), new RegisterSet(1 << log2m(0.05)))
       list.foreach(r => hyperLogLog2.offer(r))
       (list.size, hyperLogLog2)
     }
@@ -136,12 +152,11 @@ class SparkSqlCoreTest extends SparkFunSuite with ParamFunSuite {
 
     val ds = spark.createDataset(
       Array(PageViewLog("url1", "user1"),
-        PageViewLog("url1", "user2"),
-        PageViewLog("url1", "user1"),
-        PageViewLog("url2", "user4"),
-        PageViewLog("url2", "user4")))
-    ds
-      .groupBy($"url")
+            PageViewLog("url1", "user2"),
+            PageViewLog("url1", "user1"),
+            PageViewLog("url2", "user4"),
+            PageViewLog("url2", "user4")))
+    ds.groupBy($"url")
       .agg(collect_list("user").as("user_list"))
       .withColumn("pv_uv", expr("hyper_udf(user_list)"))
       .withColumn("pv", $"pv_uv".getField("_1"))
@@ -149,21 +164,24 @@ class SparkSqlCoreTest extends SparkFunSuite with ParamFunSuite {
       .show
   }
 
-
   /**
-   *
-   */
+    *
+    */
   test("spark 布隆过滤器 bloomFilter") {
-    val ds = spark.createDataset((5 to 10).map(x => PageViewLog(x.toString, "")))
-    val ds2 = spark.createDataset((1 to 10).map(x => PageViewLog(x.toString, "")))
-    val bl = ds.coalesce(10)
+    val ds =
+      spark.createDataset((5 to 10).map(x => PageViewLog(x.toString, "")))
+    val ds2 =
+      spark.createDataset((1 to 10).map(x => PageViewLog(x.toString, "")))
+    val bl = ds
+      .coalesce(10)
       .stat
       .bloomFilter("url", ds.count * 2, 0.0001)
     val blBroadc = spark.sparkContext.broadcast(bl)
     // 判断某些数据存不存在
-    ds2.map(x => {
-      (x, blBroadc.value.mightContainString(x.url))
-    })
+    ds2
+      .map(x => {
+        (x, blBroadc.value.mightContainString(x.url))
+      })
       .foreach(x => println(x))
   }
 }

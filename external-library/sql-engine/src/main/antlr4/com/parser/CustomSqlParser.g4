@@ -80,7 +80,7 @@ SELECT cols+=columnUdfState (',' cols+=columnUdfState)* FROM sourceTable=tableNa
 // udf方法定义. 支持 udf多嵌套 . 之后支持int和Double类型
 columnUdfState:
  udfname=IDENTIFIER '(' (paramcols+=columnUdfState (',' paramcols+=columnUdfState)*)? ')' asName?
-| col=columnDefineState
+| col=columnDefineState asName?
 | constantParam=(STRING|FLOAT) asName?
 ;
 
@@ -100,7 +100,7 @@ columnDefineState: (family=IDENTIFIER '.')?  colname=IDENTIFIER
 // 建表前缀
 createTableDefineState:
 CREATE OR REPLACE TEMPORARY VIEW createTablename=tableNameDefineState AS;
-// 表名定义
+// 表名定义,设置别名
 tableNameDefineState
-    :(db=IDENTIFIER DBSEPARATOR)? table=IDENTIFIER
+    :(db=IDENTIFIER DBSEPARATOR)? table=IDENTIFIER (aliasName=IDENTIFIER)?
     ;
