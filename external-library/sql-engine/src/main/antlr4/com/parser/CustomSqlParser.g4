@@ -82,6 +82,7 @@ columnUdfState:
  udfname=IDENTIFIER '(' (paramcols+=columnUdfState (',' paramcols+=columnUdfState)*)? ')' asName?
 | col=columnDefineState asName?
 | constantParam=(STRING|FLOAT) asName?
+| '*'
 ;
 
 asName:
