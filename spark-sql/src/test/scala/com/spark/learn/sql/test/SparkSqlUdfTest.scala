@@ -6,25 +6,35 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.expressions.GenericRowWithSchema
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.StructType
+import scala.collection.JavaConverters._
 
 class SparkSqlUdfTest extends SparkFunSuite with ParamFunSuite {
+
   import spark.implicits._
-  /*********************************** UDF ************************************/
+
+  /** ********************************* UDF *********************************** */
   /**
-    *
-    */
+   *
+   */
   test("udf") {
     val ds = spark.read.json(
       "/Users/eminem/workspace/git_pro/spark-learn/resources/datafile/arr_map_struc.json")
     ds.createOrReplaceTempView("test")
-// 两种方式注册
-    val udf1 = (id: String) => { (id + "_h") }
-    val udf_row = (id: String) => { WordCount(id + "_h", 1) }
-    val udf_case_row = (wc: Row) => { wc.getString(0) + "_h" }
+    // 两种方式注册
+    val udf1 = (id: String) => {
+      (id + "_h")
+    }
+    val udf_row = (id: String) => {
+      WordCount(id + "_h", 1)
+    }
+    val udf_case_row = (wc: Row) => {
+      wc.getString(0) + "_h"
+    }
 
     def udf1Func(id: String): String = {
       id + "_hell"
     }
+
     spark.udf.register("udf1Func", udf1Func _)
     spark.udf.register("udf1", udf1)
     spark.udf.register("udf_row", udf_row)
@@ -41,7 +51,33 @@ class SparkSqlUdfTest extends SparkFunSuite with ParamFunSuite {
     nds.select(expr(s"udf_case_row(wc)")).show
   }
 
-  /*********************************** UDTF ************************************/
+  /** ********************************* UDTF *********************************** */
   // hive 里面有udtf的接口： GenericUDTF。 spark想要达到效果需要 udf返回 Cass calss 为struct。然后再xx.filed来获取
 
+
+  test("UDTF : 一列转多列") {
+    val src = spark.createDataset(
+      List(
+        WordCount("a", 1L),
+        WordCount("b", 1L)).asJava)
+    src.createOrReplaceTempView("test")
+
+    val udf_row = (id: String) => {
+      WordCount(id + "_h", 1)
+    }
+    val udf_row2 = (id: String, c: Long) => {
+      WordCount(id + "_h", c)
+    }
+
+    spark.udf.register("udf_row", udf_row)
+    spark.udf.register("udf_row2", udf_row2)
+    val nds =
+      spark.sql(s"select *,udf_row(word) wd1, udf_row2(word, count) wd2 from test")
+    nds.printSchema()
+    nds.show
+    nds.createOrReplaceTempView("test2")
+    spark.sql(s"select wd2.word as gg from test2")
+      .show
+
+  }
 }

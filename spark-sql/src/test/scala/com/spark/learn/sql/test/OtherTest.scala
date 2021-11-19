@@ -9,6 +9,9 @@ import org.apache.spark.sql.types.udt.HyperLogLog2
 import org.backuity.clist.Command
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
+import org.backuity.clist._
+import org.backuity.clist.util.Read
+
 class OtherTest extends FunSuite with BeforeAndAfterAll {
   def log2m(rsd: Double): Int =
     (Math.log((1.106 / rsd) * (1.106 / rsd)) / Math.log(2)).toInt
@@ -40,11 +43,11 @@ class OtherTest extends FunSuite with BeforeAndAfterAll {
     //    println(a.cardinality())
   }
 
-  import org.backuity.clist._
-  import org.backuity.clist.util.Read
-
   test("org.backuity.clist") {
-    Cli.parse(Array("--number-nonblank='hello-world'", "--params=key1=value1,key2=value2")).withCommand(new Cat) { case cat =>
+    Cli.parse(Array(
+      "--number-nonblank='hello-world'",
+      "--params=key1=value1,key2=value2"))
+      .withCommand(new Cat) { case cat =>
       // the new Cat instance will be mutated to receive the command-line arguments
       println(cat.numberNonblank, cat.params.get("key1"))
     }
@@ -52,8 +55,10 @@ class OtherTest extends FunSuite with BeforeAndAfterAll {
 
   case class Paramer(str: String) {
     val map = str.split(",").map(x => {
-      val Array(k, v) = x.split("="); (k -> v)
+      val Array(k, v) = x.split("=");
+      (k -> v)
     }).toMap
+
     def get(key: String): Option[String] = {
       map.get(key)
     }
